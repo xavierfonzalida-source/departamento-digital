@@ -1,0 +1,12 @@
+#!/bin/sh
+# Rejects commit messages that carry AI attribution (case-insensitive).
+
+found=$(grep -i -E 'co-authored-by|generated with|claude|anthropic' "$1")
+
+if [ -n "$found" ]; then
+  echo "commit-msg: AI attribution is not allowed in this repository." >&2
+  echo "Remove these lines from the commit message:" >&2
+  echo "$found" >&2
+  exit 1
+fi
+exit 0
