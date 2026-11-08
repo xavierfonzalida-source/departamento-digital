@@ -21,7 +21,7 @@ The orchestrator gives you the paths you need; read them with `Read`, `Glob` and
 - `trabajo/research/`: competitors, keywords, SERP data with AI Overview presence, entities found, and the diagnosis question set prepared by `researcher`.
 - `trabajo/specs/`: the SEO spec (page list, Schema plan, `@id` graph) to align with.
 - `trabajo/textos/`: the copy, including the passages marked as citable.
-- For an audit: the `web/` source and its build output (`web/dist/` for Astro, `.next/` or exported HTML for Next.js), including `robots.txt`, `llms.txt` and the rendered JSON-LD.
+- For an audit: the `web/` source and its build output (`web/dist/` for Astro; prerendered or exported HTML for Next.js), including `robots.txt`, `llms.txt` and the rendered JSON-LD. Crawlers get rendered HTML: for Astro static output and Next.js prerendered or exported pages, read those HTML files; for server-rendered Next.js routes, `.next/` is not what crawlers receive, so ask the orchestrator for the rendered HTML of each route (it can save it from the running server), or audit only the prerendered/exported pages and say which routes were not audited.
 
 ## Tasks
 
