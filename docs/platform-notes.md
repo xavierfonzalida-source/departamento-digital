@@ -74,7 +74,15 @@ Ojo: la skill tiene que estar instalada y habilitada en esa sesión. Por eso imp
 
 ## Hecho 3: dependencias y alcance por proyecto
 
-**Estado: VERIFICADO**, con un ajuste necesario y un punto sin verificar (ver abajo).
+**Estado: dividido.**
+
+- **VERIFICADO:** el formato de `dependencies`. También la instalación con `--scope project` usando el marketplace del plugin como **carpeta local**: las 4 dependencias se instalan solas y quedan activas solo en ese proyecto.
+- **SIN VERIFICAR:**
+  - `PROJECT_SCOPE_INSTALL` tal como está escrito. Su primera línea usa la fuente GitHub del repo privado (`xavierfonzalida-source/departamento-digital`), y esa línea nunca se corrió.
+  - El clonado desde cero de los tres marketplaces de terceros: en esta PC ya estaban descargados.
+  - El nombre `departamento-digital` después de `@` en la línea de instalación tiene que coincidir con el `name` de `.claude-plugin/marketplace.json`. Hoy coinciden, pero si se cambia uno hay que cambiar el otro.
+
+Hace falta además un ajuste en `marketplace.json` (ver abajo).
 
 ### Formato de `dependencies` (en `.claude-plugin/plugin.json`)
 
@@ -138,7 +146,15 @@ Aunque la activación es por proyecto, Claude Code guarda las descargas y el reg
 
 ## Hecho 4: configuración de atribución
 
-**Estado: VERIFICADO.**
+**Estado: dividido.**
+
+- **VERIFICADO (en 2.1.302):** con `ATTRIBUTION_SETTING`, una sesión sin interfaz ya no recibe instrucciones de agregar `Co-Authored-By` ni "Generated with".
+- **CONFIRMADO POR DOCS:**
+  - Que la forma con textos vacíos funciona en versiones anteriores a 2.1.281.
+  - Que `"attribution": false` hace que esas versiones descarten el archivo entero.
+  - Que `includeCoAuthoredBy` está deprecado.
+
+  Nada de esto se probó en versiones viejas.
 
 ```js
 ATTRIBUTION_SETTING = { attribution: { commit: '', pr: '', sessionUrl: false } }

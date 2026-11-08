@@ -1,4 +1,4 @@
-// Claude Code platform facts verified on 2026-11-08 with Claude Code CLI 2.1.302.
+// Claude Code platform facts checked on 2026-11-08 with Claude Code CLI 2.1.302.
 // Evidence and status of each fact: docs/platform-notes.md.
 
 // Tools from a plugin-bundled MCP server are named `${MCP_TOOL_PREFIX}<server>__<tool>`.
@@ -10,8 +10,10 @@ export const MCP_TOOL_PREFIX = 'mcp__plugin_departamento-digital_';
 export const EXTERNAL_SKILL_REF = (plugin, skill) => `${plugin}:${skill}`;
 
 // settings.json fragment that removes the Co-Authored-By trailer, the PR
-// "Generated with" line and the session link. This form also works on versions
-// older than 2.1.281, which reject `"attribution": false`.
+// "Generated with" line and the session link.
+// VERIFIED on 2.1.302: with it, a headless session received no attribution instructions.
+// DOCS ONLY (not run): this form also works before 2.1.281, which rejects
+// `"attribution": false`; `includeCoAuthoredBy` is deprecated.
 export const ATTRIBUTION_SETTING = {
   attribution: { commit: '', pr: '', sessionUrl: false },
 };
@@ -19,6 +21,12 @@ export const ATTRIBUTION_SETTING = {
 // Project-scoped install, run from the client project folder. Every marketplace
 // is declared in the project's .claude/settings.json, and the plugin and its
 // four dependencies are enabled only in that project.
+// VERIFIED: this same sequence with the plugin marketplace added from a LOCAL
+// FOLDER path; dependencies auto-installed and stayed isolated to that project.
+// UNVERIFIED: the first line as written (GitHub source of the private repo was
+// never cloned); a clean clone of the three third-party marketplaces (they were
+// already on disk); `@departamento-digital` must match the `name` in
+// .claude-plugin/marketplace.json.
 export const PROJECT_SCOPE_INSTALL = [
   'claude plugin marketplace add xavierfonzalida-source/departamento-digital --scope project',
   'claude plugin marketplace add pbakaus/impeccable --scope project',
