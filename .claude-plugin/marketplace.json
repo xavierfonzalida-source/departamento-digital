@@ -2,6 +2,12 @@
   "name": "departamento-digital",
   "description": "Marketplace for the departamento-digital plugin.",
   "owner": { "name": "Xavier Fonzalida" },
+  "allowCrossMarketplaceDependenciesOn": [
+    "claude-plugins-official",
+    "impeccable",
+    "ui-ux-pro-max-skill",
+    "agricidaniel-claude-seo"
+  ],
   "plugins": [
     {
       "name": "departamento-digital",

@@ -4,5 +4,11 @@
   "description": "Multi-agent studio for building high-end client websites: creative direction, copy, SEO/GEO, frontend and QA.",
   "author": { "name": "Xavier Fonzalida" },
   "license": "MIT",
-  "repository": "https://github.com/xavierfonzalida-source/departamento-digital"
+  "repository": "https://github.com/xavierfonzalida-source/departamento-digital",
+  "dependencies": [
+    "superpowers@claude-plugins-official",
+    "impeccable@impeccable",
+    "ui-ux-pro-max@ui-ux-pro-max-skill",
+    "claude-seo@agricidaniel-claude-seo"
+  ]
 }
