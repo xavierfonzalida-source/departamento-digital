@@ -1,0 +1,12 @@
+{
+  "name": "departamento-digital",
+  "description": "Marketplace for the departamento-digital plugin.",
+  "owner": { "name": "Xavier Fonzalida" },
+  "plugins": [
+    {
+      "name": "departamento-digital",
+      "source": "./",
+      "description": "Multi-agent studio for building high-end client websites."
+    }
+  ]
+}

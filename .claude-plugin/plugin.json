@@ -1,0 +1,8 @@
+{
+  "name": "departamento-digital",
+  "version": "0.1.0",
+  "description": "Multi-agent studio for building high-end client websites: creative direction, copy, SEO/GEO, frontend and QA.",
+  "author": { "name": "Xavier Fonzalida" },
+  "license": "MIT",
+  "repository": "https://github.com/xavierfonzalida-source/departamento-digital"
+}
