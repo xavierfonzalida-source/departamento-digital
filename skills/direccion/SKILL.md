@@ -26,14 +26,14 @@ Every call below: give the paths to read, the task, and "prose in rioplatense Sp
 3. If the GEO spec flags a conflict with the SEO Schema plan or `@id` graph, give `seo-strategist` the GEO spec for an alignment pass and save its updated spec.
 
 ## 2. Concept
-`creative-director`, task 1 (concept): `brief.md`, `decisiones.md`, `trabajo/brainstorming.md` if present, `trabajo/research/`, `trabajo/specs/`, the taste path → `trabajo/specs/concepto.md`.
+`creative-director`, task 1 (concept): `brief.md`, `decisiones.md`, `trabajo/brainstorming.md` if present, `trabajo/research/`, `trabajo/specs/`, the taste path. Tell it the exact path to put on its `Suggested path:` line: `trabajo/specs/concepto.md`.
 
 ## 3. Copy, before any design
 `brand-copywriter`: the voice guide, then the copy for every page in the SEO spec's page list, in **every declared language**. Give it `brief.md`, `decisiones.md`, `trabajo/research/`, `trabajo/specs/` (SEO, GEO, concept) and both anti-AI paths. Ask for the voice guide in one call and the copy in one call per page or page group, so no return is cut off. Save under `trabajo/textos/`.
 Check each return: the anti-AI self-check table has zero banned patterns for each language, and the placeholders are listed. Send back anything that fails.
 
 ## 4. Visual direction and stack
-`creative-director`, tasks 2 and 3: the visual direction spec and the stack choice, from all of the above plus `trabajo/textos/` and the taste path → `trabajo/specs/direccion.md`. Every AI visual tell it uses must carry the brief's justification.
+`creative-director`, tasks 2 and 3: the visual direction spec and the stack choice, from all of the above plus `trabajo/textos/` and the taste path. Tell it the exact path to put on its `Suggested path:` line: `trabajo/specs/direccion.md`. Every AI visual tell it uses must carry the brief's justification.
 
 ## 5. Prototype (two calls)
 1. **Call 1.** `creative-director`, task 4: the HTML prototype (complete home plus one interior page per template type) with the real copy from `trabajo/textos/`. Give the same paths plus `trabajo/specs/direccion.md`.
@@ -59,5 +59,5 @@ Then tell Xavier, in rioplatense Spanish and briefly:
 **Stop here.** Do not plan or build anything until Xavier answers.
 
 ## 7. After his answer
-- **Approved:** record approval 1 in `trabajo/decisiones.md` with today's date: "Dirección aprobada" (spec and prototype paths) and "Stack" (choice and reason). Stop the prototype server. Update `trabajo/estado.md`. Then invoke `superpowers:writing-plans` for the section-by-section build plan: save it to `trabajo/plan.md` (not `docs/superpowers/plans/`), do not commit it, and do not hand off to an execution skill, because each section is built with `/build <section>`. Tell Xavier the plan's sections and that the next step is `/build <first section>`.
+- **Approved:** record approval 1 in `trabajo/decisiones.md` with today's date: "Dirección aprobada" with "Spec de dirección" = `trabajo/specs/direccion.md` (the source of truth `/build` and `/review-design` read), the concept path and the prototype path, and "Stack" (choice and reason). Stop the prototype server. Update `trabajo/estado.md`. Then invoke `superpowers:writing-plans` for the section-by-section build plan: save it to `trabajo/plan.md` (not `docs/superpowers/plans/`), do not commit it, and do not hand off to an execution skill, because each section is built with `/build <section>`. Tell Xavier the plan's sections and that the next step is `/build <first section>`.
 - **Changes requested:** record each change that alters a decision under "Cambios de rumbo"; route copy changes to `brand-copywriter` and design changes to `creative-director`; update only what is affected (prototype calls 1 and 2 for changed pages); present again and stop again for approval 1.

@@ -20,7 +20,7 @@ Anti-AI copy lists to pass as absolute paths:
 ## 2. Delegate
 Give it: `trabajo/decisiones.md`, the URL of each language version, `trabajo/specs/`, `trabajo/textos/`, both anti-AI paths, the scope (every page, or the home plus one page per template type when the run follows a single section; say which), the cycle number of each threshold that failed before ("LCP: cycle 2 of 3"), and "prose in rioplatense Spanish". It may run builds itself within its own rules.
 
-Save the return verbatim to its `Suggested path:` (`trabajo/reportes/qa-<YYYY-MM-DD>.md`). Handle `BLOCKED:` as `CLAUDE.md` says.
+Tell it the exact `Suggested path:` to use, `trabajo/reportes/qa-<YYYY-MM-DD>-c<n>.md` with the cycle number (`c1` on a first run), so a re-measurement never overwrites the earlier report, and save the return verbatim there. Handle `BLOCKED:` as `CLAUDE.md` says.
 
 ## 3. Verdict and fixes
 Only `Verdict: PASS` passes. A row marked "not measured" is not a pass: fix the cause (server, tool, missing path) and measure it again. Never round a value into a pass.
@@ -28,7 +28,7 @@ Only `Verdict: PASS` passes. A row marked "not measured" is not a pass: fix the 
 On FAIL:
 1. Route each failing threshold per "Route fixes" in `CLAUDE.md`, using the cause and file the report names: performance, accessibility, semantics, Schema and detector findings to `awwwards-frontend` as one fix list with the report's path; banned copy patterns to `brand-copywriter`, then the new copy to `awwwards-frontend`; a fix that would change an approved design decision to `creative-director`.
 2. Read the `awwwards-frontend` report; its Verification must show a passing build.
-3. Measure again. Each round is one cycle per threshold; log threshold, cycle, measurement and probable cause in `trabajo/estado.md` under "Ciclos de revisión".
+3. Rebuild (`npm run build` in `web/`), restart the preview server, read the URL again, then measure again. Each round is one cycle per threshold; log threshold, cycle, measurement and probable cause in `trabajo/estado.md` under "Ciclos de revisión".
 4. If a threshold still fails after cycle 3, stop retrying and escalate to Xavier as "Retry limit" in `CLAUDE.md` says: the measurement, the probable cause and the options, with your recommendation.
 
 ## 4. Close

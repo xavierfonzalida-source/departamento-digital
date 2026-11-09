@@ -125,7 +125,13 @@ test('planted [PLACEHOLDER: …] in a source file fails', () => {
   add(web, 'src/x.js', 'const t = "[PLACEHOLDER: client tagline]";\n');
   const r = scanWeb(web);
   assert.ok(r.failures.some(f => f.kind === 'content' && f.path === 'src/x.js'));
-  assert.ok(r.failures.some(f => f.kind === 'history'));
+  // Placeholders are unfinished content, not AI traces: history is not checked for them.
+  assert.ok(!r.failures.some(f => f.kind === 'history'));
+});
+test('a placeholder present only in an old commit does not fail', () => {
+  add(web, 'src/x.js', 'const t = "[PLACEHOLDER: client tagline]";\n');
+  add(web, 'src/x.js', 'const t = "Real tagline";\n');
+  assert.deepEqual(scanWeb(web).failures, []);
 });
 test('reports comment mentions of AI as warnings, not failures', () => {
   add(web, 'src/c.js', '// IA para clientes: texto del cliente');
@@ -237,6 +243,39 @@ test('CLI --clean-history without --confirm exits 1', () => {
   const r = spawnSync('node', [SCRIPT, project, '--clean-history'], { encoding: 'utf8' });
   assert.equal(r.status, 1);
   assert.equal(git(web, ['branch', '--list', 'clean-*']).trim(), '');
+});
+test('with ref, the history scan covers only that ref, so the clean branch passes', () => {
+  commitRaw(web, 'feat: y\n\nCo-Authored-By: Claude <x@y>');
+  const branch = cleanHistory(web, { confirm: true, date: '2026-12-01' });
+  assert.ok(scanWeb(web).failures.some(f => f.kind === 'history'));
+  assert.deepEqual(scanWeb(web, { ref: branch }).failures, []);
+});
+test('buildPackage with ref tags and zips the clean commit', () => {
+  commitRaw(web, 'feat: y\n\nCo-Authored-By: Claude <x@y>');
+  const branch = cleanHistory(web, { confirm: true, date: '2026-12-01' });
+  assert.throws(() => buildPackage(project, { date: '2026-12-01' }), TracesFoundError);
+  const zip = buildPackage(project, { date: '2026-12-01', ref: branch });
+  assert.ok(existsSync(zip));
+  assert.equal(git(web, ['rev-parse', 'entrega-2026-12-01^{commit}']), git(web, ['rev-parse', branch]));
+  assert.ok(readFileSync(zip).includes('README.md'));
+});
+test('buildPackage with an unknown ref fails clearly and tags nothing', () => {
+  assert.throws(() => buildPackage(project, { date: '2026-12-01', ref: 'nope' }), /nope/);
+  assert.equal(git(web, ['tag', '-l']).trim(), '');
+});
+test('buildPackage refuses a ref whose files differ from the checked-out commit', () => {
+  const branch = cleanHistory(web, { confirm: true, date: '2026-12-01' });
+  add(web, 'src/later.js', 'export const b = 2;\n');
+  assert.throws(() => buildPackage(project, { date: '2026-12-01', ref: branch }), /same files/);
+  assert.equal(git(web, ['tag', '-l']).trim(), '');
+});
+test('CLI --ref delivers the clean branch', () => {
+  commitRaw(web, 'feat: y\n\nCo-Authored-By: Claude <x@y>');
+  const branch = cleanHistory(web, { confirm: true });
+  assert.equal(spawnSync('node', [SCRIPT, project], { encoding: 'utf8' }).status, 1);
+  const r = spawnSync('node', [SCRIPT, '--ref', branch, project], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /proj-\d{4}-\d{2}-\d{2}\.zip/);
 });
 test('CLI --clean-history --confirm creates the branch', () => {
   const r = spawnSync('node', [SCRIPT, project, '--clean-history', '--confirm'], { encoding: 'utf8' });

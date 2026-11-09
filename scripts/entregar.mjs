@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Delivery gate (spec §10.3): guarantees web/ ships with no AI traces.
 // scanWeb only reads. buildPackage adds one tag and one zip outside web/. Nothing in web/ is ever edited or deleted.
-// Usage: node scripts/entregar.mjs <projectDir> [--clean-history --confirm]
+// Usage: node scripts/entregar.mjs <projectDir> [--ref <branch>] | [--clean-history --confirm]
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { basename, join, resolve } from 'node:path';
@@ -11,6 +11,8 @@ import { fileURLToPath } from 'node:url';
 // client words; that is why every finding carries path:line (and commit) so a human can judge.
 const HARD = ['Claude', 'Anthropic', 'Co-Authored-By', 'Generated with', 'AI-generated', 'ChatGPT', 'copilot', '[PLACEHOLDER:']
   .map(name => ({ name, re: new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }));
+// A placeholder is unfinished content, not an AI trace: only current files are checked for it.
+const HISTORY = HARD.filter(p => p.name !== '[PLACEHOLDER:');
 const FORBIDDEN_NAMES = new Set(['CLAUDE.md', 'AGENTS.md', '.mcp.json']);
 const FORBIDDEN_DIR_SEGMENTS = new Set(['.claude']);
 const FORBIDDEN_ROOT_PREFIXES = ['trabajo/', 'docs/superpowers/'];
@@ -21,7 +23,7 @@ const MAX_BUFFER = 1024 * 1024 * 1024;
 
 export class TracesFoundError extends Error {
   constructor(findings) {
-    super(`${findings.length} AI trace(s) found; nothing was packaged:\n${findings.map(formatFinding).join('\n')}`);
+    super(`${findings.length} blocking finding(s) (AI traces or placeholders); nothing was packaged:\n${findings.map(formatFinding).join('\n')}`);
     this.name = 'TracesFoundError';
     this.findings = findings;
   }
@@ -49,10 +51,15 @@ export class TagExistsError extends Error {
   }
 }
 
-export function scanWeb(webDir) {
+// ref: limit the history scan to that ref's ancestry (default: every branch and tag).
+export function scanWeb(webDir, { ref } = {}) {
   const web = resolve(webDir);
   const failures = [];
   const warnings = [];
+
+  if (ref !== undefined && (ref.startsWith('-') || !tryGit(web, ['rev-parse', '--verify', '--quiet', `${ref}^{commit}`]))) {
+    throw new Error(`Ref ${ref} not found in web/. Nothing was changed.`);
+  }
 
   const tracked = git(web, ['ls-files', '-z']).split('\0').filter(Boolean);
 
@@ -88,12 +95,13 @@ export function scanWeb(webDir) {
   failures.push(...content);
 
   // 3. History, all refs: messages first, then added diff lines.
-  failures.push(...scanHistory(web));
+  failures.push(...scanHistory(web, ref));
 
   return { failures, warnings };
 }
 
-export function buildPackage(projectDir, { date } = {}) {
+// ref: deliver that ref (for example the clean-<date> branch) instead of HEAD.
+export function buildPackage(projectDir, { date, ref } = {}) {
   const project = resolve(projectDir);
   const web = join(project, 'web');
   const day = date ?? today();
@@ -102,7 +110,16 @@ export function buildPackage(projectDir, { date } = {}) {
   const dirty = git(web, ['status', '--porcelain', '--untracked-files=no']).trimEnd();
   if (dirty) throw new DirtyTreeError(dirty);
 
-  const { failures } = scanWeb(web);
+  const target = ref ?? 'HEAD';
+  if (!tryGit(web, ['rev-parse', '--verify', '--quiet', `${target}^{commit}`])) {
+    throw new Error(`Ref ${target} not found in web/. Nothing was changed.`);
+  }
+  // The content scan reads the checked-out files, so the delivered ref must hold exactly that tree.
+  if (git(web, ['rev-parse', `${target}^{tree}`]) !== git(web, ['rev-parse', 'HEAD^{tree}'])) {
+    throw new Error(`Ref ${target} does not hold the same files as the checked-out commit; the scan would not cover what ships. Nothing was changed.`);
+  }
+
+  const { failures } = scanWeb(web, { ref });
   if (failures.length) throw new TracesFoundError(failures);
 
   const tag = `entrega-${day}`;
@@ -110,7 +127,7 @@ export function buildPackage(projectDir, { date } = {}) {
   if (git(web, ['tag', '-l', tag]).trim() || existsSync(zip)) throw new TagExistsError(tag);
 
   mkdirSync(join(project, 'entrega'), { recursive: true });
-  git(web, ['tag', tag]);
+  git(web, ['tag', tag, target]);
   try {
     // Archives the tagged commit, so untracked files can never ship.
     git(web, ['archive', '--format=zip', '-o', zip, tag]);
@@ -138,11 +155,12 @@ export function cleanHistory(webDir, { confirm, date } = {}) {
   return branch;
 }
 
-function scanHistory(web) {
+function scanHistory(web, ref) {
+  const revs = ref ? [ref, '--'] : ['--all'];
   const out = [];
   const seen = new Set();
   const report = (commit, path, line, text) => {
-    for (const h of HARD) {
+    for (const h of HISTORY) {
       const key = `${commit}:${h.name}`;
       if (seen.has(key) || !h.re.test(text)) continue;
       seen.add(key);
@@ -152,7 +170,7 @@ function scanHistory(web) {
 
   // Messages
   let commit = null;
-  for (const l of git(web, ['-c', 'core.quotepath=false', 'log', '--all', '--format=%x01%H%x00%B']).split(/\r?\n/)) {
+  for (const l of git(web, ['-c', 'core.quotepath=false', 'log', '--format=%x01%H%x00%B', ...revs]).split(/\r?\n/)) {
     if (l.startsWith('\x01')) { [commit] = l.slice(1).split('\0'); report(commit, '(commit message)', 0, l.split('\0')[1] ?? ''); }
     else if (commit) report(commit, '(commit message)', 0, l);
   }
@@ -160,7 +178,7 @@ function scanHistory(web) {
   // Diffs: only added lines. +++ headers are skipped by tracking whether we are inside a hunk.
   let path = null, inHunk = false, ln = 0;
   commit = null;
-  const diff = git(web, ['-c', 'core.quotepath=false', 'log', '--all', '-p', '--no-color', '--no-ext-diff', '--no-textconv', '--format=%x01%H']);
+  const diff = git(web, ['-c', 'core.quotepath=false', 'log', '-p', '--no-color', '--no-ext-diff', '--no-textconv', '--format=%x01%H', ...revs]);
   for (const l of diff.split(/\r?\n/)) {
     if (l.startsWith('\x01')) { commit = l.slice(1); inHunk = false; path = null; }
     else if (l.startsWith('diff --git ')) { inHunk = false; path = null; }
@@ -238,10 +256,13 @@ const isMain = () => {
 
 if (isMain()) {
   const args = process.argv.slice(2);
-  const flags = args.filter(a => a.startsWith('--'));
-  const target = args.find(a => !a.startsWith('--'));
-  if (!target) {
-    console.error('Usage: node scripts/entregar.mjs <projectDir> [--clean-history --confirm]');
+  const refAt = args.indexOf('--ref');
+  const ref = refAt === -1 ? undefined : args[refAt + 1];
+  const rest = refAt === -1 ? args : args.filter((_, i) => i !== refAt && i !== refAt + 1);
+  const flags = rest.filter(a => a.startsWith('--'));
+  const target = rest.find(a => !a.startsWith('--'));
+  if (!target || (refAt !== -1 && (!ref || ref.startsWith('-')))) {
+    console.error('Usage: node scripts/entregar.mjs <projectDir> [--ref <branch>] | [--clean-history --confirm]');
     process.exit(1);
   }
   try {
@@ -249,14 +270,14 @@ if (isMain()) {
       const branch = cleanHistory(join(resolve(target), 'web'), { confirm: flags.includes('--confirm') });
       console.log(`Created orphan branch ${branch} with one commit. Existing branches were not touched.`);
     } else {
-      const { failures, warnings } = scanWeb(join(resolve(target), 'web'));
+      const { failures, warnings } = scanWeb(join(resolve(target), 'web'), { ref });
       for (const w of warnings) console.log(`warning  ${formatFinding(w)}`);
       if (failures.length) {
         for (const f of failures) console.log(formatFinding(f));
-        console.error(`${failures.length} AI trace(s) found. Nothing was packaged.`);
+        console.error(`${failures.length} blocking finding(s) (AI traces or placeholders). Nothing was packaged.`);
         process.exit(1);
       }
-      console.log(buildPackage(target));
+      console.log(buildPackage(target, { ref }));
     }
   } catch (e) {
     console.error(`Error: ${e.message}`);

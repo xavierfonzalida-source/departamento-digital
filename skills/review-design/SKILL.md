@@ -16,18 +16,18 @@ disable-model-invocation: true
 ## 2. Delegate
 Task 5 (design review). Give it:
 - the site URL(s) and the prototype URL;
-- `brief.md`, `trabajo/decisiones.md`, `trabajo/specs/direccion.md`, `trabajo/specs/concepto.md`, `trabajo/textos/`, the prototype folder and the taste path;
+- `brief.md`, `trabajo/decisiones.md`, the direction spec recorded as "Spec de dirección" in `decisiones.md` (normally `trabajo/specs/direccion.md`), the concept recorded there (normally `trabajo/specs/concepto.md`), `trabajo/textos/`, the prototype folder and the taste path;
 - the scope: the pages or section just built (from `/build` or `/ronda`) plus a pass over the rest for regressions, or the whole site when Xavier ran this command on its own;
 - the cycle number per finding when this is a re-review ("cycle 2 of 3");
 - "run impeccable's `critique` as your instructions say; prose in rioplatense Spanish".
 
-Save the return verbatim to its `Suggested path:` (`trabajo/reportes/design-<YYYY-MM-DD>.md`). Handle `BLOCKED:` as `CLAUDE.md` says.
+Tell it the exact `Suggested path:` to use, `trabajo/reportes/design-<YYYY-MM-DD>-c<n>.md` with the cycle number (`c1` on a first review), so a re-review never overwrites the earlier report, and save the return verbatim there. Handle `BLOCKED:` as `CLAUDE.md` says.
 
 ## 3. Verdict and fixes
 The review passes when no critical or major finding remains. Xavier does not see a failing review.
 1. Route each finding per "Route fixes" in `CLAUDE.md`: implementation defects to `awwwards-frontend` as one fix list with the report's path; copy problems to `brand-copywriter` (then the new copy to `awwwards-frontend`); a finding that would change an approved design decision to `creative-director`, or to Xavier when it changes the result. Minor findings go in the same fix list unless they would change a design decision.
 2. Read the `awwwards-frontend` report; its Verification must show a passing build.
-3. Review again with the same scope. Each build-and-review round is one cycle; log it in `trabajo/estado.md` under "Ciclos de revisión". After cycle 3 with the same finding still open, stop and escalate to Xavier as "Retry limit" in `CLAUDE.md` says.
+3. Rebuild (`npm run build` in `web/`), restart the preview server, read the URL again, then review again with the same scope. Each build-and-review round is one cycle; log it in `trabajo/estado.md` under "Ciclos de revisión". After cycle 3 with the same finding still open, stop and escalate to Xavier as "Retry limit" in `CLAUDE.md` says.
 
 ## 4. Close
 Stop both servers unless the next step needs them. When Xavier ran this command on its own and fixes were applied, record in `trabajo/estado.md` that `/review-seo`, `/review-geo` and `/qa` must run again before the commit. Tell Xavier the result in two or three lines, in Spanish, pointing to the report.

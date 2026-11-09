@@ -20,10 +20,10 @@ Brief every call completely: the task, the paths `brief.md`, `trabajo/decisiones
 2. **Market data** (one call per declared language and market, in parallel with call 1): keywords and SERP with AI Overview presence and cited domains, entities around the topic, and quotable data from primary sources.
 3. **mcp-geo question set** (after call 2 is saved, one call): about 20 questions per declared language that buyers would ask an AI assistant, derived from the saved keyword and SERP files (give their paths). Say explicitly that you are asking for the question set.
 
-Save each return verbatim to its `Suggested path:` under `trabajo/research/` (rules in `CLAUDE.md`, "Save deliverables verbatim"). If a table row has no source, send it back once asking for the source or the row's removal.
+Tell it the exact `Suggested path:` for each call, so per-language returns never overwrite each other: `trabajo/research/referencias-competencia.md` (call 1), `trabajo/research/mercado-<lang>-<market>.md` (call 2, for example `mercado-es-ar.md`), `trabajo/research/preguntas-geo.md` (call 3). Save each return verbatim there (rules in `CLAUDE.md`, "Save deliverables verbatim"). If a table row has no source, send it back once asking for the source or the row's removal.
 
 ## 3. geo-strategist: AI-visibility diagnosis
-Call it once per declared language and market. Give it `brief.md`, `trabajo/decisiones.md`, every file in `trabajo/research/` (including the question set) and the task: "run the AI-visibility diagnosis with mcp-geo for <language/market>, within the budget in your instructions (about 20 questions × 4 engines × 3 rounds), prose in rioplatense Spanish". Save each return verbatim (`trabajo/research/geo-diagnosis.md`, or with a language suffix when there are two).
+Call it once per declared language and market. Give it `brief.md`, `trabajo/decisiones.md`, every file in `trabajo/research/` (including the question set) and the task: "run the AI-visibility diagnosis with mcp-geo for <language/market>, within the budget in your instructions (about 20 questions × 4 engines × 3 rounds), prose in rioplatense Spanish". Tell it the exact `Suggested path:`, `trabajo/research/geo-diagnosis-<lang>-<market>.md` (for example `geo-diagnosis-es-ar.md`), and save each return verbatim there.
 
 ## 4. Close
 - Handle any `BLOCKED:` reply as `CLAUDE.md` says. A missing API key is Xavier's to supply: tell him which variable and which agent needs it, and continue with whatever the other tools can collect.
