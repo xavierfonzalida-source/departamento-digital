@@ -77,9 +77,8 @@ Ojo: la skill tiene que estar instalada y habilitada en esa sesión. Por eso imp
 **Estado: dividido.**
 
 - **VERIFICADO:** el formato de `dependencies`. También la instalación con `--scope project` usando el marketplace del plugin como **carpeta local**: las 4 dependencias se instalan solas y quedan activas solo en ese proyecto.
-- **SIN VERIFICAR:**
-  - `PROJECT_SCOPE_INSTALL` tal como está escrito. Su primera línea usa la fuente GitHub del repo privado (`xavierfonzalida-source/departamento-digital`), y esa línea nunca se corrió.
-  - El clonado desde cero de los tres marketplaces de terceros: en esta PC ya estaban descargados.
+- **VERIFICADO el 2026-11-09:** `PROJECT_SCOPE_INSTALL` tal como está escrito, con la fuente GitHub del repo ya público, en una carpeta nueva: instaló la versión 0.2.0 y sus 4 dependencias con alcance de proyecto. Los tres marketplaces de terceros se clonaron desde cero (antes se habían quitado de esta PC).
+- **A tener en cuenta:**
   - El nombre `departamento-digital` después de `@` en la línea de instalación tiene que coincidir con el `name` de `.claude-plugin/marketplace.json`. Hoy coinciden, pero si se cambia uno hay que cambiar el otro.
 
 Hace falta además un ajuste en `marketplace.json` (ver abajo).
@@ -140,7 +139,7 @@ Aunque la activación es por proyecto, Claude Code guarda las descargas y el reg
 
 ### Sin verificar
 
-- **Instalar desde GitHub.** Probé el marketplace del plugin como **carpeta local**. `PROJECT_SCOPE_INSTALL` usa `xavierfonzalida-source/departamento-digital`, que es la forma documentada para GitHub. Como el repo es **privado**, el clonado usa tus credenciales de git. Qué revisar: correr la primera línea de `PROJECT_SCOPE_INSTALL` en una carpeta de prueba y confirmar que clona sin pedir nada.
+- ~~**Instalar desde GitHub.**~~ Resuelto el 2026-11-09: con el repo público, `PROJECT_SCOPE_INSTALL` completo funcionó en una carpeta nueva (ver Hecho 3).
 - **superpowers en una máquina sin él instalado.** Acá ya estaba a nivel usuario. Igual en projC se creó además una instalación por proyecto de superpowers, así que el mecanismo funciona. En una máquina nueva, `claude-plugins-official` suele venir de fábrica, pero no lo probé.
 - En esta PC los tres marketplaces de terceros ya estaban descargados cuando corrí projC (`already on disk`). En una máquina nueva se clonan en ese paso.
 

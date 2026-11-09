@@ -21,12 +21,10 @@ export const ATTRIBUTION_SETTING = {
 // Project-scoped install, run from the client project folder. Every marketplace
 // is declared in the project's .claude/settings.json, and the plugin and its
 // four dependencies are enabled only in that project.
-// VERIFIED: this same sequence with the plugin marketplace added from a LOCAL
-// FOLDER path; dependencies auto-installed and stayed isolated to that project.
-// UNVERIFIED: the first line as written (GitHub source of the private repo was
-// never cloned); a clean clone of the three third-party marketplaces (they were
-// already on disk); `@departamento-digital` must match the `name` in
-// .claude-plugin/marketplace.json.
+// VERIFIED (2026-11-09): this exact sequence against the public GitHub repo in
+// a fresh folder; v0.2.0 and its four dependencies installed at project scope,
+// third-party marketplaces cloned from scratch. `@departamento-digital` must
+// match the `name` in .claude-plugin/marketplace.json.
 export const PROJECT_SCOPE_INSTALL = [
   'claude plugin marketplace add xavierfonzalida-source/departamento-digital --scope project',
   'claude plugin marketplace add pbakaus/impeccable --scope project',
