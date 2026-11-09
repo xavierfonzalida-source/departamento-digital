@@ -1,0 +1,21 @@
+name: Proponer una mejora
+description: Una idea para un agente, un comando, una skill o el flujo de trabajo.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Qué problema resuelve
+      description: El momento del trabajo en que lo extrañaste.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas que consideraste

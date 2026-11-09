@@ -1,10 +1,12 @@
 {
   "name": "departamento-digital",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Multi-agent studio for building high-end client websites: creative direction, copy, SEO/GEO, frontend and QA.",
   "author": { "name": "Xavier Fonzalida" },
+  "homepage": "https://github.com/xavierfonzalida-source/departamento-digital#readme",
   "license": "MIT",
   "repository": "https://github.com/xavierfonzalida-source/departamento-digital",
+  "keywords": ["web-design", "seo", "geo", "generative-engine-optimization", "multi-agent", "astro", "nextjs", "gsap", "accessibility", "core-web-vitals"],
   "dependencies": [
     "superpowers@claude-plugins-official",
     "impeccable@impeccable",

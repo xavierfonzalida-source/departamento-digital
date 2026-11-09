@@ -25,11 +25,45 @@ claude plugin install departamento-digital@departamento-digital --scope project
 
 La fuente de estas líneas es `PROJECT_SCOPE_INSTALL` en `tests/platform.mjs`. Al terminar, el plugin y sus cuatro dependencias quedan habilitados solo en esa carpeta (se anotan en `.claude/settings.json` de la carpeta).
 
-**Estado de verificación.** La secuencia se probó con el marketplace del plugin agregado desde una **carpeta local**. La primera línea, con la fuente de GitHub del repo privado, todavía no se pudo verificar: `marketplace add` baja la rama por defecto, que antes de integrar esta rama solo tiene documentos. Queda en el checklist de `docs/piloto-2026-11.md` como "verificar después del merge". Como el repo es privado, esa PC necesita Git o `gh` con acceso a tu cuenta.
+Dentro de una sesión de Claude Code, el último paso equivale a `/plugin install departamento-digital@departamento-digital`.
+
+**Acceso.** El repositorio es público: no hace falta cuenta ni credenciales de GitHub para instalarlo. Claude Code clona con `git` sin pedir contraseñas; si en tu PC no tenés clave SSH configurada para GitHub y el clonado falla, definí `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` para que use HTTPS directo.
 
 **Primera sesión.** `impeccable` descarga su motor (unos 20 MB) la primera vez que abrís una sesión con el plugin. Esperá a que termine.
 
 Las variables de entorno y el primer arranque de los MCP están más abajo.
+
+### Actualizar
+
+En marketplaces que no son oficiales, como este, **la actualización automática viene apagada**. Para traer la última versión, en la carpeta del cliente:
+
+```
+claude plugin marketplace update departamento-digital
+claude plugin update departamento-digital@departamento-digital --scope project
+```
+
+Después reiniciá Claude Code (o usá `/reload-plugins`). Si preferís que se actualice solo, activalo en `/plugin` > pestaña Marketplaces > Enable auto-update. Qué cambió en cada versión está en [`CHANGELOG.md`](CHANGELOG.md).
+
+Los proyectos ya creados no se rompen al actualizar: `/nuevo-cliente` copia el `CLAUDE.md` en el momento de crear cada proyecto.
+
+### Desinstalar
+
+En la carpeta del cliente:
+
+```
+claude plugin uninstall departamento-digital@departamento-digital --scope project --prune
+```
+
+`--prune` quita también las dependencias que se instalaron solas (superpowers, impeccable, ui-ux-pro-max, claude-seo) si ya nada las usa. Los marketplaces agregados se quitan con `claude plugin marketplace remove <nombre>`.
+
+### Qué ejecuta este plugin
+
+Antes de instalar conviene saber qué corre en tu máquina:
+
+- **Hooks.** El plugin no trae hooks propios. Sus dependencias sí: `claude-seo` valida el JSON-LD después de cada edición de archivo, e `impeccable` trae un hook de diseño y descarga su motor la primera vez.
+- **Servidores MCP (7).** `context7` y `wikidata` son remotos (HTTPS); `chrome-devtools`, `playwright`, `dataforseo`, `brave-search` y `mcp-geo` corren local con `npx`, en versiones fijas. Detalle y credenciales en [Variables de entorno](#variables-de-entorno).
+- **Scripts.** `scripts/nuevo-cliente.mjs` (crea la estructura del proyecto) y `scripts/entregar.mjs` (revisa y empaqueta la entrega). Solo usan Node y Git, y no se conectan a internet.
+- **Skills de terceros** copiadas dentro del plugin, con su licencia: ver [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Cómo se trabaja
 
@@ -137,3 +171,20 @@ Son **estimaciones, no mediciones**. Se miden en el primer proyecto real y se co
 | Tokens de Claude | n/d | Sin medir |
 
 Fuente de todas las filas: `docs/superpowers/specs/2026-11-08-departamento-digital-design.md` §7.3.
+
+## Colaborar y publicar versiones
+
+¿Encontraste un error o tenés una idea? Abrí un issue o mandá un pull request: la guía está en [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+**Regla de versiones para quien mantiene el plugin.** Cada publicación sube el número de `version` en `.claude-plugin/plugin.json` (por ejemplo 0.2.0 → 0.3.0) y agrega su entrada en `CHANGELOG.md`. Si se publica un cambio sin subir la versión, Claude Code responde "ya está en la última versión" y los usuarios se quedan con la copia vieja. Antes de publicar:
+
+```
+npm test
+claude plugin validate --strict .
+```
+
+GitHub corre lo mismo en cada push y pull request (`.github/workflows/ci.yml`).
+
+## Licencia
+
+MIT, ver [`LICENSE`](LICENSE). Las skills de terceros conservan sus licencias originales (todas MIT), detalladas en `THIRD_PARTY_NOTICES.md`.
