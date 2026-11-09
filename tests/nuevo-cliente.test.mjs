@@ -88,6 +88,13 @@ test('settings.json disables attribution and sets impeccable live agent', () => 
   assert.equal(s.env.IMPECCABLE_LIVE_COPY_AGENT, 'chat');
   assert.deepEqual(pick(s, Object.keys(ATTRIBUTION_SETTING)), ATTRIBUTION_SETTING);
 });
+test('templates/settings.json carries exactly the verified attribution setting', () => {
+  const t = JSON.parse(readRepo('templates/settings.json'));
+  assert.deepEqual(pick(t, Object.keys(ATTRIBUTION_SETTING)), ATTRIBUTION_SETTING);
+});
+test('the scaffold script does not import from tests/', () => {
+  assert.doesNotMatch(readRepo('scripts/nuevo-cliente.mjs'), /from ['"][^'"]*tests\//);
+});
 test('merges into the settings.json written by the project-scope install', () => {
   mkdirSync(join(dir, '.claude'));
   const existing = { enabledPlugins: { 'departamento-digital@departamento-digital': true }, env: { FOO: '1' } };

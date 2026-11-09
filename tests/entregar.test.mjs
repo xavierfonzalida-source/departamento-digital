@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
-  scanWeb, buildPackage, cleanHistory, TracesFoundError, DirtyTreeError, ConfirmationRequiredError, TagExistsError,
+  scanWeb, buildPackage, cleanHistory, TracesFoundError, DirtyTreeError, ConfirmationRequiredError,
 } from '../scripts/entregar.mjs';
 
 const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), '..', 'scripts', 'entregar.mjs');
@@ -58,7 +58,7 @@ function branchWithFileThenRevert(repo, branch, rel, content) {
 }
 
 test('clean repo passes and produces tag + zip', () => {
-  const zip = buildPackage(project, { date: '2026-12-01' });
+  const { zip } = buildPackage(project, { date: '2026-12-01' });
   assert.ok(existsSync(zip));
   assert.equal(zip, join(project, 'entrega', 'proj-2026-12-01.zip'));
   assert.equal(git(web, ['tag', '-l', 'entrega-2026-12-01']).trim(), 'entrega-2026-12-01');
@@ -67,7 +67,7 @@ test('clean repo passes and produces tag + zip', () => {
 });
 test('untracked files never ship in the zip', () => {
   writeFileSync(join(web, 'draft-notes.txt'), 'private\n');
-  const zip = buildPackage(project, { date: '2026-12-01' });
+  const { zip } = buildPackage(project, { date: '2026-12-01' });
   assert.ok(!readFileSync(zip).includes('draft-notes.txt'));
 });
 test('buildPackage does not touch the working tree', () => {
@@ -198,9 +198,62 @@ test('CLI exits 1 on a dirty tracked tree', () => {
   assert.equal(r.status, 1);
   assert.match(r.stderr, /uncommitted/);
 });
-test('buildPackage fails clearly when the tag already exists', () => {
-  buildPackage(project, { date: '2026-12-01' });
-  assert.throws(() => buildPackage(project, { date: '2026-12-01' }), TagExistsError);
+test('a second delivery on the same day gets the -2 suffix and keeps the first', () => {
+  const first = buildPackage(project, { date: '2026-12-01' });
+  const firstBytes = readFileSync(first.zip);
+  const second = buildPackage(project, { date: '2026-12-01' });
+  assert.equal(second.tag, 'entrega-2026-12-01-2');
+  assert.equal(second.zip, join(project, 'entrega', 'proj-2026-12-01-2.zip'));
+  assert.ok(existsSync(second.zip));
+  assert.deepEqual(readFileSync(first.zip), firstBytes);
+  assert.equal(git(web, ['tag', '-l', 'entrega-2026-12-01*']).trim().split(/\r?\n/).length, 2);
+  assert.equal(buildPackage(project, { date: '2026-12-01' }).tag, 'entrega-2026-12-01-3');
+});
+test('a leftover zip without its tag also moves delivery to the next suffix', () => {
+  mkdirSync(join(project, 'entrega'));
+  writeFileSync(join(project, 'entrega', 'proj-2026-12-01.zip'), 'old');
+  const { tag, zip } = buildPackage(project, { date: '2026-12-01' });
+  assert.equal(tag, 'entrega-2026-12-01-2');
+  assert.equal(readFileSync(join(project, 'entrega', 'proj-2026-12-01.zip'), 'utf8'), 'old');
+  assert.ok(existsSync(zip));
+});
+test('CLI prints the chosen tag name', () => {
+  spawnSync('node', [SCRIPT, project], { encoding: 'utf8' });
+  const r = spawnSync('node', [SCRIPT, project], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /proj-\d{4}-\d{2}-\d{2}-2\.zip/);
+  assert.match(r.stdout, /Created tag entrega-\d{4}-\d{2}-\d{2}-2 in web\//);
+});
+test('a second clean branch on the same day gets the -2 suffix', () => {
+  const first = cleanHistory(web, { confirm: true, date: '2026-12-01' });
+  const firstSha = git(web, ['rev-parse', first]);
+  assert.equal(cleanHistory(web, { confirm: true, date: '2026-12-01' }), 'clean-2026-12-01-2');
+  assert.equal(git(web, ['rev-parse', first]), firstSha);
+});
+test('robots.txt User-agent lines for AI crawlers pass, in files and in history', () => {
+  add(web, 'public/robots.txt', 'User-agent: ClaudeBot\nAllow: /\n\nuser-agent: anthropic-ai\nUser-agent: ChatGPT-User\nAllow: /\n');
+  add(web, 'robots.txt', '  User-agent: Claude-SearchBot\nAllow: /\n');
+  assert.deepEqual(scanWeb(web).failures, []);
+});
+test('the same crawler token outside robots.txt still fails', () => {
+  add(web, 'index.html', '<p>User-agent: ClaudeBot</p>\n');
+  const r = scanWeb(web);
+  assert.ok(r.failures.some(f => f.kind === 'content' && f.path === 'index.html' && f.match === 'Claude'));
+  assert.ok(r.failures.some(f => f.kind === 'history' && f.path === 'index.html'));
+});
+test('a non-User-agent line in robots.txt that names Claude still fails', () => {
+  add(web, 'robots.txt', 'User-agent: ClaudeBot\n# rules for Claude\nAllow: /\n');
+  const r = scanWeb(web);
+  const c = r.failures.find(f => f.kind === 'content' && f.path === 'robots.txt');
+  assert.ok(c);
+  assert.equal(c.line, 2);
+  const h = r.failures.find(f => f.kind === 'history' && f.path === 'robots.txt');
+  assert.ok(h);
+  assert.equal(h.line, 2);
+});
+test('a robots.txt crawler line removed from the files leaves no history finding', () => {
+  branchWithFileThenRevert(web, 'other', 'robots.txt', 'User-agent: GPTBot\nUser-agent: ClaudeBot\n');
+  assert.deepEqual(scanWeb(web).failures, []);
 });
 test('cleanHistory requires confirmation', () => {
   assert.throws(() => cleanHistory(web, { confirm: false }), ConfirmationRequiredError);
@@ -221,7 +274,7 @@ test('cleanHistory creates an orphan branch with one commit and leaves main alon
 });
 test('scans a web repo in a path with spaces and accents', () => {
   ({ project, web } = makeProject('Cliente Ñandú'));
-  const zip = buildPackage(project, { date: '2026-12-01' });
+  const { zip } = buildPackage(project, { date: '2026-12-01' });
   assert.ok(existsSync(zip));
   assert.equal(zip, join(project, 'entrega', 'Cliente Ñandú-2026-12-01.zip'));
   add(web, 'src/ñ x.js', 'const a = "Anthropic";\n');
@@ -254,7 +307,7 @@ test('buildPackage with ref tags and zips the clean commit', () => {
   commitRaw(web, 'feat: y\n\nCo-Authored-By: Claude <x@y>');
   const branch = cleanHistory(web, { confirm: true, date: '2026-12-01' });
   assert.throws(() => buildPackage(project, { date: '2026-12-01' }), TracesFoundError);
-  const zip = buildPackage(project, { date: '2026-12-01', ref: branch });
+  const { zip } = buildPackage(project, { date: '2026-12-01', ref: branch });
   assert.ok(existsSync(zip));
   assert.equal(git(web, ['rev-parse', 'entrega-2026-12-01^{commit}']), git(web, ['rev-parse', branch]));
   assert.ok(readFileSync(zip).includes('README.md'));

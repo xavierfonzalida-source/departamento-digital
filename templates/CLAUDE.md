@@ -100,6 +100,7 @@ How to work with them:
 - **`BLOCKED:` replies.** When an agent returns `BLOCKED: <reason>`, supply what it lists from the files, or from Xavier when only he can decide, and call it again. Never fill the gap with a guess.
 - **Route fixes.** Review findings go to `awwwards-frontend` as a fix list; copy problems to `brand-copywriter`; design conflicts to `creative-director`. If two reports conflict, decide by the approved specs, or ask Xavier when it changes the result.
 - **Never delegate to claude-seo's own agents** or its full-audit orchestrators. SEO work goes to `seo-strategist` only.
+- **Vendored skills belong to the specialists.** `copywriting`, `copy-editing`, `cro`, the `geo-*` skills and the animation skills (`animate`, `choreograph`, `improve-animations` and the rest) are for the specialists, which preload or invoke them; you never invoke them to produce a deliverable yourself.
 
 ## Two zones
 The work zone and the website repository never mix.
@@ -107,7 +108,7 @@ The work zone and the website repository never mix.
 - **`trabajo/` is the work zone.** Research, specs, copy, prototypes and reports live here, with all their AI traces. It is never delivered.
 - **`web/` is the website.** It has its own git repository, ignored by the client folder's `.gitignore`, and it must never contain an AI trace.
 - Nothing from `trabajo/` ever enters `web/`: not prototype files, not reports, not notes. Copy reaches the site only through `awwwards-frontend` building from `trabajo/textos/`.
-- `web/` never contains `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.mcp.json`, `docs/superpowers/` or a `trabajo/` folder. No code, comment, metadata or file name in `web/` mentions Claude, Anthropic, ChatGPT, Copilot or AI generation.
+- `web/` never contains `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.mcp.json`, `docs/superpowers/` or a `trabajo/` folder. No code, comment, metadata or file name in `web/` mentions Claude, Anthropic, ChatGPT, Copilot or AI generation. The only exception: the `User-agent:` lines of a `robots.txt` may name the AI crawlers the GEO spec lists (`ClaudeBot`, `anthropic-ai`, `ChatGPT-User`...); the delivery script exempts exactly those lines.
 
 ## Commands
 | Command | What it does |

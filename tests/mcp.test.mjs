@@ -43,6 +43,38 @@ test('no literal secrets: every env value is a ${VAR} reference (empty default a
     for (const v of Object.values(s.env ?? {})) assert.match(v, /^\$\{[A-Z0-9_]+(:-)?\}$/);
 });
 
+// A global ANTHROPIC_API_KEY would switch Claude Code itself to API billing, so every mcp-geo
+// engine key is read from a MCP_GEO_-prefixed variable and renamed only for that server.
+test('mcp-geo engine keys come only from MCP_GEO_ variables', () => {
+  const env = mcp().mcpServers['mcp-geo'].env;
+  assert.deepEqual(Object.keys(env).sort(),
+    ['ANTHROPIC_API_KEY', 'GEMINI_API_KEY', 'OPENAI_API_KEY', 'PERPLEXITY_API_KEY', 'SERPAPI_API_KEY', 'XAI_API_KEY']);
+  for (const [k, v] of Object.entries(env)) assert.equal(v, `\${MCP_GEO_${k}:-}`, k);
+});
+
+test('README warns never to set ANTHROPIC_API_KEY globally', () => {
+  const r = read('README.md');
+  assert.match(r, /Nunca definas `ANTHROPIC_API_KEY` como variable global/);
+  assert.ok(!/setx ANTHROPIC_API_KEY/.test(r));
+  assert.ok(!/^\| `ANTHROPIC_API_KEY`/m.test(r), 'the env table must list MCP_GEO_ANTHROPIC_API_KEY, not ANTHROPIC_API_KEY');
+});
+
+// Required credentials stay strict ${VAR} (no default), so a missing one is never an empty string.
+test('DataForSEO and Brave credentials are strict ${VAR} references', () => {
+  const s = mcp().mcpServers;
+  assert.deepEqual(s.dataforseo.env, { DATAFORSEO_LOGIN: '${DATAFORSEO_LOGIN}', DATAFORSEO_PASSWORD: '${DATAFORSEO_PASSWORD}' });
+  assert.deepEqual(s['brave-search'].env, { BRAVE_API_KEY: '${BRAVE_API_KEY}' });
+});
+
+test('npx servers pin an exact package version, and README pre-warms the same versions', () => {
+  const r = read('README.md');
+  for (const n of ['chrome-devtools', 'playwright', 'dataforseo', 'brave-search', 'mcp-geo']) {
+    const pkg = mcp().mcpServers[n].args.find(a => a !== '-y' && !a.startsWith('-'));
+    assert.match(pkg, /^(@[^/]+\/)?[^@]+@\d+\.\d+\.\d+$/, n);
+    assert.ok(r.includes(`npx -y ${pkg} --help`), `README pre-warm for ${pkg}`);
+  }
+});
+
 test('no literal secrets in headers', () => {
   for (const s of Object.values(mcp().mcpServers))
     for (const v of Object.values(s.headers ?? {})) assert.match(v, /^Bearer \$\{[A-Z0-9_]+:-\}$/);

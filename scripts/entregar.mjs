@@ -13,6 +13,9 @@ const HARD = ['Claude', 'Anthropic', 'Co-Authored-By', 'Generated with', 'AI-gen
   .map(name => ({ name, re: new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }));
 // A placeholder is unfinished content, not an AI trace: only current files are checked for it.
 const HISTORY = HARD.filter(p => p.name !== '[PLACEHOLDER:');
+// The GEO spec requires robots.txt rules for AI crawlers (ClaudeBot, anthropic-ai, ChatGPT-User...):
+// only the User-agent lines of a file named robots.txt are exempt; every other line is still scanned.
+const isCrawlerRule = (rel, text) => rel.split('/').pop() === 'robots.txt' && /^\s*User-agent:/i.test(text);
 const FORBIDDEN_NAMES = new Set(['CLAUDE.md', 'AGENTS.md', '.mcp.json']);
 const FORBIDDEN_DIR_SEGMENTS = new Set(['.claude']);
 const FORBIDDEN_ROOT_PREFIXES = ['trabajo/', 'docs/superpowers/'];
@@ -41,13 +44,6 @@ export class DirtyTreeError extends Error {
     super(`web/ has uncommitted changes to tracked files; the zip is built from the last commit, so commit or discard them first. Nothing was changed:
 ${status}`);
     this.name = 'DirtyTreeError';
-  }
-}
-
-export class TagExistsError extends Error {
-  constructor(tag) {
-    super(`Tag ${tag} already exists (or its zip does). Use another date or remove it by hand. Nothing was changed.`);
-    this.name = 'TagExistsError';
   }
 }
 
@@ -87,7 +83,7 @@ export function scanWeb(webDir, { ref } = {}) {
     }
     if (buf.subarray(0, BINARY_SNIFF).includes(0)) continue;
     buf.toString('utf8').split(/\r?\n/).forEach((text, i) => {
-      const hits = HARD.filter(p => p.re.test(text));
+      const hits = isCrawlerRule(rel, text) ? [] : HARD.filter(p => p.re.test(text));
       for (const h of hits) content.push({ kind: 'content', path: rel, line: i + 1, match: h.name });
       if (!hits.length && commentMentionsAI(text)) warnings.push({ kind: 'comment', path: rel, line: i + 1, match: 'AI/IA' });
     });
@@ -122,9 +118,11 @@ export function buildPackage(projectDir, { date, ref } = {}) {
   const { failures } = scanWeb(web, { ref });
   if (failures.length) throw new TracesFoundError(failures);
 
-  const tag = `entrega-${day}`;
-  const zip = join(project, 'entrega', `${basename(project)}-${day}.zip`);
-  if (git(web, ['tag', '-l', tag]).trim() || existsSync(zip)) throw new TagExistsError(tag);
+  // A second delivery on the same day gets -2, -3...: an existing tag or zip is never overwritten.
+  const suffix = firstFree(s => !git(web, ['tag', '-l', `entrega-${day}${s}`]).trim()
+    && !existsSync(join(project, 'entrega', `${basename(project)}-${day}${s}.zip`)));
+  const tag = `entrega-${day}${suffix}`;
+  const zip = join(project, 'entrega', `${basename(project)}-${day}${suffix}.zip`);
 
   mkdirSync(join(project, 'entrega'), { recursive: true });
   git(web, ['tag', tag, target]);
@@ -135,7 +133,15 @@ export function buildPackage(projectDir, { date, ref } = {}) {
     git(web, ['tag', '-d', tag]);
     throw e;
   }
-  return zip;
+  return { zip, tag };
+}
+
+// '' if free, else '-2', '-3'...
+function firstFree(isFree) {
+  for (let n = 1; ; n++) {
+    const s = n === 1 ? '' : `-${n}`;
+    if (isFree(s)) return s;
+  }
 }
 
 // Orphan branch with one commit holding the current (HEAD) tree. Built with commit-tree so the
@@ -143,8 +149,8 @@ export function buildPackage(projectDir, { date, ref } = {}) {
 export function cleanHistory(webDir, { confirm, date } = {}) {
   if (confirm !== true) throw new ConfirmationRequiredError();
   const web = resolve(webDir);
-  const branch = `clean-${date ?? today()}`;
-  if (git(web, ['branch', '--list', branch]).trim()) throw new Error(`Branch ${branch} already exists. Nothing was changed.`);
+  const day = date ?? today();
+  const branch = `clean-${day}${firstFree(s => !git(web, ['branch', '--list', `clean-${day}${s}`]).trim())}`;
   const identity = {
     GIT_AUTHOR_NAME: tryGit(web, ['config', 'user.name']) || 'Delivery',
     GIT_AUTHOR_EMAIL: tryGit(web, ['config', 'user.email']) || 'delivery@example.invalid',
@@ -160,6 +166,7 @@ function scanHistory(web, ref) {
   const out = [];
   const seen = new Set();
   const report = (commit, path, line, text) => {
+    if (isCrawlerRule(path, text)) return;
     for (const h of HISTORY) {
       const key = `${commit}:${h.name}`;
       if (seen.has(key) || !h.re.test(text)) continue;
@@ -277,7 +284,9 @@ if (isMain()) {
         console.error(`${failures.length} blocking finding(s) (AI traces or placeholders). Nothing was packaged.`);
         process.exit(1);
       }
-      console.log(buildPackage(target, { ref }));
+      const { zip, tag } = buildPackage(target, { ref });
+      console.log(zip);
+      console.log(`Created tag ${tag} in web/.`);
     }
   } catch (e) {
     console.error(`Error: ${e.message}`);

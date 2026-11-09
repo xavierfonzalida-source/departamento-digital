@@ -6,7 +6,6 @@ import { appendFileSync, chmodSync, copyFileSync, existsSync, mkdirSync, readFil
 import { execFileSync } from 'node:child_process';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ATTRIBUTION_SETTING } from '../tests/platform.mjs';
 
 const TEMPLATES = fileURLToPath(new URL('../templates/', import.meta.url));
 const WORK_DIRS = ['research', 'specs', 'textos', 'prototipos', 'reportes'];
@@ -77,7 +76,8 @@ function mergedSettings(file) {
     }
   }
   const template = JSON.parse(readFileSync(join(TEMPLATES, 'settings.json'), 'utf8'));
-  return { ...existing, ...template, env: { ...existing.env, ...template.env }, ...ATTRIBUTION_SETTING };
+  // The template's top-level keys (attribution included) win over the existing ones.
+  return { ...existing, ...template, env: { ...existing.env, ...template.env } };
 }
 
 // sh under Git for Windows breaks on CRLF, whatever git's autocrlf did to the template.
