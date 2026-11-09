@@ -34,6 +34,14 @@ export class ConfirmationRequiredError extends Error {
   }
 }
 
+export class DirtyTreeError extends Error {
+  constructor(status) {
+    super(`web/ has uncommitted changes to tracked files; the zip is built from the last commit, so commit or discard them first. Nothing was changed:
+${status}`);
+    this.name = 'DirtyTreeError';
+  }
+}
+
 export class TagExistsError extends Error {
   constructor(tag) {
     super(`Tag ${tag} already exists (or its zip does). Use another date or remove it by hand. Nothing was changed.`);
@@ -90,6 +98,9 @@ export function buildPackage(projectDir, { date } = {}) {
   const web = join(project, 'web');
   const day = date ?? today();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) throw new Error(`Invalid date "${day}" (expected YYYY-MM-DD).`);
+
+  const dirty = git(web, ['status', '--porcelain', '--untracked-files=no']).trimEnd();
+  if (dirty) throw new DirtyTreeError(dirty);
 
   const { failures } = scanWeb(web);
   if (failures.length) throw new TracesFoundError(failures);

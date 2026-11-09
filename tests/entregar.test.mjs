@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
-  scanWeb, buildPackage, cleanHistory, TracesFoundError, ConfirmationRequiredError, TagExistsError,
+  scanWeb, buildPackage, cleanHistory, TracesFoundError, DirtyTreeError, ConfirmationRequiredError, TagExistsError,
 } from '../scripts/entregar.mjs';
 
 const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), '..', 'scripts', 'entregar.mjs');
@@ -173,6 +173,24 @@ test('buildPackage refuses when traces exist', () => {
   assert.throws(() => buildPackage(project, { date: '2026-12-01' }), TracesFoundError);
   assert.ok(!existsSync(join(project, 'entrega')));
   assert.equal(git(web, ['tag', '-l']).trim(), '');
+});
+test('dirty tracked image (HEAD marked, working copy clean) is rejected', () => {
+  addBytes(web, 'img/h.png', pngWithText('Software', 'DALL-E'));
+  writeFileSync(join(web, 'img/h.png'), pngWithText('Software', 'GIMP'));
+  assert.throws(() => buildPackage(project, { date: '2026-12-01' }), DirtyTreeError);
+  assert.ok(!existsSync(join(project, 'entrega')));
+});
+test('staged deletion of a forbidden file is rejected', () => {
+  add(web, '.mcp.json', '{}');
+  git(web, ['rm', '-q', '--', '.mcp.json']);
+  assert.throws(() => buildPackage(project, { date: '2026-12-01' }), DirtyTreeError);
+  assert.equal(git(web, ['tag', '-l']).trim(), '');
+});
+test('CLI exits 1 on a dirty tracked tree', () => {
+  writeFileSync(join(web, 'README.md'), 'changed\n');
+  const r = spawnSync('node', [SCRIPT, project], { encoding: 'utf8' });
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /uncommitted/);
 });
 test('buildPackage fails clearly when the tag already exists', () => {
   buildPackage(project, { date: '2026-12-01' });
