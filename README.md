@@ -59,13 +59,15 @@ Orden típico: `/nuevo-cliente` → `/investigar` → `/direccion` → (aprobaci
 
 ### Entrega y rastros de IA
 
-El comando `/entregar` corre este script (también lo podés correr vos en una terminal):
+El comando `/entregar` corre este script desde el plugin (no desde la carpeta del cliente, donde no existe):
 
 ```
-node scripts/entregar.mjs <carpeta-del-cliente>
-node scripts/entregar.mjs <carpeta-del-cliente> --clean-history --confirm
-node scripts/entregar.mjs <carpeta-del-cliente> --ref clean-AAAA-MM-DD
+node "${CLAUDE_PLUGIN_ROOT}/scripts/entregar.mjs" "<carpeta del cliente>"
+node "${CLAUDE_PLUGIN_ROOT}/scripts/entregar.mjs" "<carpeta del cliente>" --clean-history --confirm
+node "${CLAUDE_PLUGIN_ROOT}/scripts/entregar.mjs" "<carpeta del cliente>" --ref clean-<fecha>
 ```
+
+`--clean-history --confirm` y `--ref clean-<fecha>` son las opciones que `/entregar` te ofrece cuando hay rastros en el historial. Si querés correrlo a mano en una terminal, usá la ruta absoluta al `scripts/entregar.mjs` del plugin (dentro de la caché de plugins de Claude Code) y la carpeta del cliente como argumento.
 
 Si el historial de `web/` tiene un `Co-Authored-By` u otro rastro, `--clean-history --confirm` crea una rama nueva con un solo commit (no toca las ramas existentes) y `--ref` entrega esa rama. Cada hallazgo se muestra con archivo, línea y commit, para que decidas si es un falso positivo (por ejemplo, un cliente que se llame "Copilot"). Los archivos prohibidos en `web/` son `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.mcp.json`, `docs/superpowers/` y `trabajo/`.
 
