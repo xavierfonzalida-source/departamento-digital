@@ -21,7 +21,7 @@ Task 5 (design review). Give it:
 - the cycle number per finding when this is a re-review ("cycle 2 of 3");
 - "run impeccable's `critique` as your instructions say; prose in rioplatense Spanish".
 
-Tell it the exact `Suggested path:` to use, `trabajo/reportes/design-<YYYY-MM-DD>-c<n>.md` with the cycle number (`c1` on a first review), so a re-review never overwrites the earlier report, and save the return verbatim there. Handle `BLOCKED:` as `CLAUDE.md` says.
+Tell it the exact `Suggested path:` to use, `trabajo/reportes/design-<section>-<YYYY-MM-DD>-c<n>.md`, where `<section>` is the slug of the scope: the section just built (for example `hero`), `ronda-r<n>` for the reviews of a round, or `sitio` when the scope is the whole site, with the cycle number (`c1` on a first review), so neither a re-review nor another section's review overwrites an earlier report, and save the return verbatim there. Handle `BLOCKED:` as `CLAUDE.md` says.
 
 ## 3. Verdict and fixes
 The review passes when no critical or major finding remains. Xavier does not see a failing review.

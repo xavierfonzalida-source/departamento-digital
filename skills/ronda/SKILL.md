@@ -21,7 +21,7 @@ Plugin files to pass as absolute paths:
 2. If an item is ambiguous (which page, which text, what result), ask him once, all doubts together, with your reading of each so he can answer in one line.
 3. If an item conflicts with the approved direction, a spec or a quality threshold (for example an animation that cannot hold 60 fps), tell him the trade-off with the options and your recommendation before acting on it.
 4. Record in `trabajo/decisiones.md`, with today's date, every item that changes a decision (under "Cambios de rumbo") and every fact he supplies (a real testimonial, a price, a client logo).
-5. Save the round to `trabajo/reportes/ronda-<YYYY-MM-DD>.md`: each item, its owner and its status.
+5. Save the round to `trabajo/reportes/ronda-<YYYY-MM-DD>-r<n>.md`, where `<n>` is the number of round files already in `trabajo/reportes/` plus one, so a second round never overwrites the first: each item, its owner and its status. Use `ronda-r<n>` as the section slug in the review report names of step 3.
 
 ## 2. Route
 Owner per the delegation matrix in `CLAUDE.md`:

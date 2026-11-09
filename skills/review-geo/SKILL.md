@@ -16,7 +16,7 @@ disable-model-invocation: true
 ## 2. Delegate
 GEO audit, task 3. Give it: `brief.md`, `trabajo/decisiones.md`, `trabajo/specs/geo.md`, `trabajo/specs/seo.md`, `trabajo/textos/`, the `web/` path and its build output path, the scope (the section just built plus regressions, or the whole site when Xavier ran this command on its own), the cycle number per finding on a re-audit, and: "this is an audit, do not run mcp-geo; prose in rioplatense Spanish".
 
-Tell it the exact `Suggested path:` to use, `trabajo/reportes/geo-<YYYY-MM-DD>-c<n>.md` with the cycle number (`c1` on a first audit), so a re-audit never overwrites the earlier report, and save the return verbatim there. Handle `BLOCKED:` as `CLAUDE.md` says.
+Tell it the exact `Suggested path:` to use, `trabajo/reportes/geo-<section>-<YYYY-MM-DD>-c<n>.md`, where `<section>` is the slug of the scope: the section just built (for example `hero`), `ronda-r<n>` for the reviews of a round, or `sitio` when the scope is the whole site, with the cycle number (`c1` on a first audit), so neither a re-audit nor another section's audit overwrites an earlier report, and save the return verbatim there. Handle `BLOCKED:` as `CLAUDE.md` says.
 
 ## 3. Verdict and fixes
 The audit passes when every GEO spec section passes in every declared language and no critical or major finding remains. Xavier does not see a failing audit.

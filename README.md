@@ -69,7 +69,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/entregar.mjs" "<carpeta del cliente>" --ref 
 
 `--clean-history --confirm` y `--ref clean-<fecha>` son las opciones que `/entregar` te ofrece cuando hay rastros en el historial. Si querés correrlo a mano en una terminal, usá la ruta absoluta al `scripts/entregar.mjs` del plugin (dentro de la caché de plugins de Claude Code) y la carpeta del cliente como argumento.
 
-Si el historial de `web/` tiene un `Co-Authored-By` u otro rastro, `--clean-history --confirm` crea una rama nueva con un solo commit (no toca las ramas existentes) y `--ref` entrega esa rama. Cada hallazgo se muestra con archivo, línea y commit, para que decidas si es un falso positivo (por ejemplo, un cliente que se llame "Copilot"). Los archivos prohibidos en `web/` son `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.mcp.json`, `docs/superpowers/` y `trabajo/`.
+Si el historial de `web/` tiene un `Co-Authored-By` u otro rastro, `--clean-history --confirm` crea una rama nueva con un solo commit (no toca las ramas existentes) y `--ref` entrega esa rama. Nada se pisa nunca: si ese día ya hubo una entrega, la etiqueta y el zip salen con sufijo (`entrega-<fecha>-2`, `-3`, …), y lo mismo la rama limpia (`clean-<fecha>-2`); el script imprime el nombre que eligió. Los nombres de crawlers de IA en las líneas `User-agent:` de un `robots.txt` (`ClaudeBot`, `ChatGPT-User`, …) no cuentan como rastro, porque la especificación GEO los pide; cualquier otra línea de ese archivo se revisa igual. Cada hallazgo se muestra con archivo, línea y commit, para que decidas si es un falso positivo (por ejemplo, un cliente que se llame "Copilot"). Los archivos prohibidos en `web/` son `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.mcp.json`, `docs/superpowers/` y `trabajo/`.
 
 La tabla de licencias de lo copiado de terceros (repositorio, commit y licencia) está en `THIRD_PARTY_NOTICES.md`.
 
@@ -85,16 +85,18 @@ El resultado del piloto de aceptación y el checklist que te toca correr a vos e
 | `DATAFORSEO_PASSWORD` | `dataforseo` | Contraseña de la API | Sí, para usar DataForSEO | Misma pantalla (es la contraseña de API, no la de la cuenta) |
 | `BRAVE_API_KEY` | `brave-search` | Búsqueda web por país e idioma | Sí, para usar Brave Search | api-dashboard.search.brave.com/app/keys (pide tarjeta) |
 | `CONTEXT7_API_KEY` | `context7` | Límites de uso más altos en la documentación | No (sin clave anda, con menos cupo) | context7.com/dashboard (gratis) |
-| `OPENAI_API_KEY` | `mcp-geo` | Motor ChatGPT | No (el motor sin clave se saltea) | platform.openai.com |
-| `ANTHROPIC_API_KEY` | `mcp-geo` | Motor Claude | No | console.anthropic.com |
-| `GEMINI_API_KEY` | `mcp-geo` | Motor Gemini | No | aistudio.google.com |
-| `PERPLEXITY_API_KEY` | `mcp-geo` | Motor Perplexity | No | perplexity.ai/settings/api |
-| `XAI_API_KEY` | `mcp-geo` | Motor Grok | No | console.x.ai |
-| `SERPAPI_API_KEY` | `mcp-geo` | Google AI Overviews | No | serpapi.com |
+| `MCP_GEO_OPENAI_API_KEY` | `mcp-geo` | Motor ChatGPT | No (el motor sin clave se saltea) | platform.openai.com |
+| `MCP_GEO_ANTHROPIC_API_KEY` | `mcp-geo` | Motor Claude | No | console.anthropic.com |
+| `MCP_GEO_GEMINI_API_KEY` | `mcp-geo` | Motor Gemini | No | aistudio.google.com |
+| `MCP_GEO_PERPLEXITY_API_KEY` | `mcp-geo` | Motor Perplexity | No | perplexity.ai/settings/api |
+| `MCP_GEO_XAI_API_KEY` | `mcp-geo` | Motor Grok | No | console.x.ai |
+| `MCP_GEO_SERPAPI_API_KEY` | `mcp-geo` | Google AI Overviews | No | serpapi.com |
+
+**Las claves de `mcp-geo` llevan el prefijo `MCP_GEO_`.** `.mcp.json` se las pasa al servidor con el nombre que él espera (por ejemplo, `MCP_GEO_ANTHROPIC_API_KEY` llega como `ANTHROPIC_API_KEY`), pero solo a ese servidor. **Nunca definas `ANTHROPIC_API_KEY` como variable global de tu sistema** (ni con `setx` ni en el Panel de control): si existe, Claude Code la usa en vez de tu suscripción y te cobra cada mensaje por API, aparte. Lo mismo vale, por prolijidad, para `OPENAI_API_KEY` y las demás: definí solo las versiones con `MCP_GEO_`.
 
 `context7`, `chrome-devtools`, `playwright` y `wikidata` no necesitan clave. Las claves opcionales de `mcp-geo` y `CONTEXT7_API_KEY` se declaran con valor por defecto vacío (`${VAR:-}`): así, si no las definís, el servidor las ve vacías en vez de recibir el texto literal `${VAR}`.
 
-**Ojo con las claves que faltan:** `claude mcp list` no te las marca. Los servidores aparecen como Connected igual, y recién fallan con un error de autenticación cuando un agente llama a una de sus herramientas. Por eso, antes de `/investigar`, confirmá a mano que `DATAFORSEO_LOGIN`, `DATAFORSEO_PASSWORD` y `BRAVE_API_KEY` estén definidas.
+**Ojo con las claves que faltan:** `claude mcp list` no te las marca. Los servidores aparecen como Connected igual, y recién fallan con un error de autenticación cuando un agente llama a una de sus herramientas. Por eso `/investigar` arranca comprobando que `DATAFORSEO_LOGIN`, `DATAFORSEO_PASSWORD` y `BRAVE_API_KEY` estén definidas (solo mira si existen, nunca muestra su valor) y, si falta alguna, se detiene y te dice cuál.
 
 ### Primer arranque: `MCP_TIMEOUT` y pre-calentado de `npx`
 
@@ -111,12 +113,14 @@ Los servidores locales corren con `npx`. La primera vez, `npx` baja el paquete y
 2. **Pre-calentar una sola vez** para que los paquetes queden en la caché de `npx`:
 
    ```
-   npx -y chrome-devtools-mcp@latest --help
-   npx -y @playwright/mcp@latest --help
-   npx -y dataforseo-mcp-server --help
-   npx -y @brave/brave-search-mcp-server --help
-   npx -y @digestseo/mcp-geo --help
+   npx -y chrome-devtools-mcp@1.12.0 --help
+   npx -y @playwright/mcp@0.0.84 --help
+   npx -y dataforseo-mcp-server@3.1.3 --help
+   npx -y @brave/brave-search-mcp-server@2.1.4 --help
+   npx -y @digestseo/mcp-geo@0.3.30 --help
    ```
+
+   Son las mismas versiones fijas de `.mcp.json` (las publicadas al 2026-11-09, según `npm view`). Fijarlas evita que una versión nueva de un paquete cambie el comportamiento sin aviso; para actualizar, se cambian en los dos lugares a la vez.
 
    Los comandos con `--help` no están probados uno por uno: si alguno se queda esperando, cortalo con Ctrl+C; el paquete ya quedó descargado.
 

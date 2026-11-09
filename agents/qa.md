@@ -92,7 +92,7 @@ Return exactly one Markdown block, which the orchestrator saves verbatim. Write 
 
 ```
 ## Summary
-Suggested path: trabajo/reportes/qa-<date>.md
+Suggested path: trabajo/reportes/qa-<section>-<date>-c<n>.md (use the exact path the orchestrator gives)
 Verdict: PASS or FAIL. Cycle: <n of 3, if given>
 <failing thresholds per language, with the most likely cause and the file or component involved, for the orchestrator to route>
 

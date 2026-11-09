@@ -20,7 +20,7 @@ Anti-AI copy lists to pass as absolute paths:
 ## 2. Delegate
 Give it: `trabajo/decisiones.md`, the URL of each language version, `trabajo/specs/`, `trabajo/textos/`, both anti-AI paths, the scope (every page, or the home plus one page per template type when the run follows a single section; say which), the cycle number of each threshold that failed before ("LCP: cycle 2 of 3"), and "prose in rioplatense Spanish". It may run builds itself within its own rules.
 
-Tell it the exact `Suggested path:` to use, `trabajo/reportes/qa-<YYYY-MM-DD>-c<n>.md` with the cycle number (`c1` on a first run), so a re-measurement never overwrites the earlier report, and save the return verbatim there. Handle `BLOCKED:` as `CLAUDE.md` says.
+Tell it the exact `Suggested path:` to use, `trabajo/reportes/qa-<section>-<YYYY-MM-DD>-c<n>.md`, where `<section>` is the slug of the scope: the section just built (for example `hero`), `ronda-r<n>` for the reviews of a round, or `sitio` when the scope is the whole site, with the cycle number (`c1` on a first run), so neither a re-measurement nor another section's measurement overwrites an earlier report, and save the return verbatim there. Handle `BLOCKED:` as `CLAUDE.md` says.
 
 ## 3. Verdict and fixes
 Only `Verdict: PASS` passes. A row marked "not measured" is not a pass: fix the cause (server, tool, missing path) and measure it again. Never round a value into a pass.

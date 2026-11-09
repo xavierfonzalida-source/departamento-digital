@@ -10,6 +10,11 @@ argument-hint: "[competidores, referentes o foco que Xavier quiera sumar]"
 Research stage of the workflow in `CLAUDE.md`. Two agents of this plugin, called with the Agent tool as `departamento-digital:researcher` and `departamento-digital:geo-strategist`. Extra input from Xavier, if any: $ARGUMENTS
 
 ## 1. Check before spending
+- **Credentials first.** The MCP servers show as connected even without their keys and only fail when an agent calls them, so check the required variables before anything else. Run exactly this; it prints only `set` or `unset`, never a value (never print, echo or log a credential's value in any other way):
+  ```
+  node -e "for (const k of ['DATAFORSEO_LOGIN','DATAFORSEO_PASSWORD','BRAVE_API_KEY']) console.log(k + ': ' + (process.env[k] ? 'set' : 'unset'))"
+  ```
+  If any of the three is `unset`, stop before calling any agent and tell Xavier, in Spanish, something like: "No puedo arrancar la investigación: falta definir `<VARIABLE>` (la usa `<dataforseo | brave-search>`). Definila como variable de entorno de Windows (ver 'Variables de entorno' en el README del plugin), cerrá y volvé a abrir Claude Code, y corré `/investigar` de nuevo." Name every missing variable. Continue only if he explicitly asks to research without that tool, and record that choice in `decisiones.md`.
 - `trabajo/decisiones.md` must declare the languages and, for Spanish, the variant. If not, ask Xavier first (see "Client material" in `CLAUDE.md`).
 - Each declared language needs a **market** (country) for keywords, SERP and mcp-geo, for example Spanish → Argentina, English → United States. Take it from the brief or the brainstorming; if it is not stated, ask Xavier with your recommendation, because it changes every result. Record markets in `decisiones.md`, section "Idiomas", with the date.
 - If `trabajo/research/` already holds findings, ask the agent only for what is missing or what Xavier asked to refresh.

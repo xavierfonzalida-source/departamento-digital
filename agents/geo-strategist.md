@@ -80,7 +80,7 @@ Return exactly one Markdown block, which the orchestrator saves verbatim. Write 
 
 ```
 ## Summary
-Suggested path: trabajo/research/geo-diagnosis.md, trabajo/specs/geo.md or trabajo/reportes/geo-<date>.md
+Suggested path: trabajo/research/geo-diagnosis.md, trabajo/specs/geo.md or trabajo/reportes/geo-<section>-<date>-c<n>.md (use the exact path the orchestrator gives)
 <5-10 lines: key findings or decisions, critical fixes, open items, mcp-geo runs made>
 
 ## Deliverable

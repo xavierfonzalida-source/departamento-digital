@@ -83,7 +83,7 @@ Return exactly one Markdown block, which the orchestrator saves verbatim. Write 
 
 ```
 ## Summary
-Suggested path: trabajo/specs/seo.md (or trabajo/reportes/seo-<date>.md for an audit)
+Suggested path: trabajo/specs/seo.md (or trabajo/reportes/seo-<section>-<date>-c<n>.md for an audit, the exact path the orchestrator gives)
 <5-10 lines: key decisions or the audit verdict, critical fixes, open items, DataForSEO calls made>
 
 ## Deliverable
