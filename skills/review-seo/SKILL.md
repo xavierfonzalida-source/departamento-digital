@@ -1,6 +1,6 @@
 ---
 name: review-seo
-description: SEO audit of the built site - seo-strategist checks the production build output against the SEO spec page by page and language by language (metadata, headings, links, hreflang, sitemap, robots, JSON-LD); fixes go back to awwwards-frontend, within the 3-cycle limit.
+description: SEO audit of the built site - seo-strategist checks the production build output against the SEO spec page by page and language by language (metadata, headings, links, hreflang, sitemap, robots, JSON-LD); fixes go back to frontend-engineer, within the 3-cycle limit.
 disable-model-invocation: true
 ---
 
@@ -20,8 +20,8 @@ Tell it the exact `Suggested path:` to use, `trabajo/reportes/seo-<section>-<YYY
 
 ## 3. Verdict and fixes
 The audit passes when every spec section closes as pass and no critical or major finding remains. Xavier does not see a failing audit.
-1. Send the fixes to `awwwards-frontend` as one list with the report's path. Copy changes (titles, descriptions, headings wording) go to `brand-copywriter` first. A fix that conflicts with the approved design goes to `creative-director`, or to Xavier when it changes the result.
-2. Read the `awwwards-frontend` report; its Verification must show a passing build.
+1. Send the fixes to `frontend-engineer` as one list with the report's path. Copy changes (titles, descriptions, headings wording) go to `brand-copywriter` first. A fix that conflicts with the approved design goes to `creative-director`, or to Xavier when it changes the result.
+2. Read the `frontend-engineer` report; its Verification must show a passing build.
 3. Rebuild and audit again with the same scope. Each round is one cycle; log it in `trabajo/estado.md` under "Ciclos de revisión". After cycle 3 with the same finding open, stop and escalate as "Retry limit" in `CLAUDE.md` says.
 
 ## 4. Close

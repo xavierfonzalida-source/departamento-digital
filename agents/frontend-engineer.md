@@ -1,5 +1,5 @@
 ---
-name: awwwards-frontend
+name: frontend-engineer
 description: Use for every change to the site's code - /build <section> from the approved spec and prototype, and applying fixes from design, SEO, GEO and QA reviews. The only agent that writes code, and only inside web/. Builds in Astro or Next.js per trabajo/decisiones.md with Tailwind v4, GSAP and subtle Three.js.
 model: sonnet
 color: blue

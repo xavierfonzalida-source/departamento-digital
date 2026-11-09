@@ -1,6 +1,6 @@
 ---
 name: build
-description: Builds one section of the site after approval 1 - awwwards-frontend builds it in web/ from the approved specs, copy and prototype; then the design, SEO, GEO and QA reviews run with their fix loops (3-cycle limit), and the section is committed once everything passes.
+description: Builds one section of the site after approval 1 - frontend-engineer builds it in web/ from the approved specs, copy and prototype; then the design, SEO, GEO and QA reviews run with their fix loops (3-cycle limit), and the section is committed once everything passes.
 disable-model-invocation: true
 argument-hint: "<sección, por ejemplo hero>"
 ---
@@ -9,7 +9,7 @@ argument-hint: "<sección, por ejemplo hero>"
 
 Section to build: **$ARGUMENTS**
 
-`awwwards-frontend` (Agent tool, `departamento-digital:awwwards-frontend`) writes all code in `web/`; you brief it, verify, run the reviews and commit.
+`frontend-engineer` (Agent tool, `departamento-digital:frontend-engineer`) writes all code in `web/`; you brief it, verify, run the reviews and commit.
 
 ## 0. Preconditions
 - No section name above: ask Xavier which one, listing the next sections of `trabajo/plan.md`.
@@ -17,7 +17,7 @@ Section to build: **$ARGUMENTS**
 - The section must have its approved spec in the direction spec recorded as "Spec de dirección" in `decisiones.md` (normally `trabajo/specs/direccion.md`; this command calls it "the direction spec"), its copy in `trabajo/textos/` and, when it appears in the prototype, its reference in `trabajo/prototipos/`. If something is missing, get it from its owner (matrix in `CLAUDE.md`) before building.
 
 ## 1. Build
-Brief `awwwards-frontend` completely: "build the section <name>", the matching part of `trabajo/plan.md`, and the paths of `trabajo/decisiones.md`, the direction spec, `trabajo/specs/seo.md`, `trabajo/specs/geo.md`, the copy files for this section in every declared language, the prototype pages where it appears (reference to rebuild, not to port), any earlier report in `trabajo/reportes/` that touches this section, and "report prose in rioplatense Spanish".
+Brief `frontend-engineer` completely: "build the section <name>", the matching part of `trabajo/plan.md`, and the paths of `trabajo/decisiones.md`, the direction spec, `trabajo/specs/seo.md`, `trabajo/specs/geo.md`, the copy files for this section in every declared language, the prototype pages where it appears (reference to rebuild, not to port), any earlier report in `trabajo/reportes/` that touches this section, and "report prose in rioplatense Spanish".
 
 Its report is not saved; act on it:
 - `BLOCKED:` → resolve as `CLAUDE.md` says and call again.

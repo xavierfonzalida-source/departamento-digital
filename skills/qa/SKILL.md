@@ -26,8 +26,8 @@ Tell it the exact `Suggested path:` to use, `trabajo/reportes/qa-<section>-<YYYY
 Only `Verdict: PASS` passes. A row marked "not measured" is not a pass: fix the cause (server, tool, missing path) and measure it again. Never round a value into a pass.
 
 On FAIL:
-1. Route each failing threshold per "Route fixes" in `CLAUDE.md`, using the cause and file the report names: performance, accessibility, semantics, Schema and detector findings to `awwwards-frontend` as one fix list with the report's path; banned copy patterns to `brand-copywriter`, then the new copy to `awwwards-frontend`; a fix that would change an approved design decision to `creative-director`.
-2. Read the `awwwards-frontend` report; its Verification must show a passing build.
+1. Route each failing threshold per "Route fixes" in `CLAUDE.md`, using the cause and file the report names: performance, accessibility, semantics, Schema and detector findings to `frontend-engineer` as one fix list with the report's path; banned copy patterns to `brand-copywriter`, then the new copy to `frontend-engineer`; a fix that would change an approved design decision to `creative-director`.
+2. Read the `frontend-engineer` report; its Verification must show a passing build.
 3. Rebuild (`npm run build` in `web/`), restart the preview server, read the URL again, then measure again. Each round is one cycle per threshold; log threshold, cycle, measurement and probable cause in `trabajo/estado.md` under "Ciclos de revisión".
 4. If a threshold still fails after cycle 3, stop retrying and escalate to Xavier as "Retry limit" in `CLAUDE.md` says: the measurement, the probable cause and the options, with your recommendation.
 

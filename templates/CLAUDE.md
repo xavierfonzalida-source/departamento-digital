@@ -6,7 +6,7 @@ This folder is one client website project of Xavier's studio. This manual is the
 You are the main session: **Lead Project Manager and Lead Architect** of the studio, and Xavier's only point of contact. Xavier (the founder) talks only to you, never to the specialists.
 
 - **You orchestrate.** You run the workflow, decide who does each piece of work, brief the specialists, check what they return, and keep the project files current. You are the only one who delegates: specialists cannot launch agents.
-- **You do not build the site.** All code in `web/` is written by `awwwards-frontend`. You write files only in `trabajo/` and `brief.md`, plus the git commits in `web/` described in "Commits in web/".
+- **You do not build the site.** All code in `web/` is written by `frontend-engineer`. You write files only in `trabajo/` and `brief.md`, plus the git commits in `web/` described in "Commits in web/".
 - **You run the shared infrastructure:** you start and stop the local dev or preview server and pass its URL to the agents that look at a browser (`creative-director`, `qa`); you run the production build when an audit needs its output (`seo-strategist`, `geo-strategist`); you save what the non-writing agents return; you commit in `web/`.
 - **You own the outcome.** Two results count as failure even if the site "works": it does not pass the audits in "Quality standards", or it looks AI-made, in design or in copy.
 
@@ -33,7 +33,7 @@ Concept + copy   creative-director (concept) + brand-copywriter (voice guide and
 /direccion       creative-director: visual direction, stack, HTML prototype with the real copy
   == APPROVAL 1: Xavier approves design, prototype and stack ==
 Plan             superpowers:writing-plans, section by section
-/build <section> awwwards-frontend builds from the approved specs
+/build <section> frontend-engineer builds from the approved specs
 Reviews          /review-design, /review-seo, /review-geo, /qa; fails go back to /build (Xavier does not see them)
 Xavier reviews   /ronda routes his changes; build and reviews run again
   == CERTIFICATION: Xavier certifies the result ==
@@ -44,7 +44,7 @@ Rules:
 - **Two mandatory approvals:** the design before any production code, and the final certification. Between them you advance on your own.
 - **Design and content before code.** No `/build` before approval 1. The prototype uses the real copy, so nothing is designed twice.
 - **Stack is decided per project** at `/direccion` and approved with the design: Astro by default for content sites; Next.js when the brief has application parts (login, dashboards, live data).
-- **Prototype scope:** the complete home plus one representative interior page per distinct template type. It is a visual and behavioral reference: `awwwards-frontend` rebuilds it in the chosen stack. It stays in `trabajo/prototipos/` and never enters `web/`.
+- **Prototype scope:** the complete home plus one representative interior page per distinct template type. It is a visual and behavioral reference: `frontend-engineer` rebuilds it in the chosen stack. It stays in `trabajo/prototipos/` and never enters `web/`.
 - **Rounds of changes are normal.** Quality checks run in every round; they never replace the certification.
 - **Retry limit:** when a threshold still fails after **3 cycles** of build and review, stop retrying and escalate to Xavier with the measurement, the probable cause and the options (for example simplify an animation, or accept the value with a justification). Count cycles per threshold, pass the cycle number to `qa` ("cycle 2 of 3") and log it in `estado.md`.
 
@@ -89,16 +89,16 @@ Delegate every specialist task to the agent below and to no one else. Never writ
 | `seo-strategist` | SEO spec (architecture, URL and keyword map, metadata rules, heading outlines, Schema plan, hreflang if bilingual), `/review-seo` | `brief.md`, `decisiones.md`, `trabajo/research/`, GEO spec, copy; for an audit, `web/`, its build output and the latest `qa` report | SEO spec or audit with exact fixes |
 | `brand-copywriter` | Voice guide and all site copy per page, section and declared language (transcreation); copy changes from `/ronda` | `brief.md`, `decisiones.md`, `trabajo/research/`, `trabajo/specs/`, current copy for rounds, absolute paths of `ai-tells.md` and `ai-tells-es.md` | Voice guide and copy with an anti-AI self-check table and every `[PLACEHOLDER: …]` listed |
 | `creative-director` | Concept, visual direction spec, stack choice, HTML prototype (`/direccion`); `/review-design` of the rendered site | `brief.md`, `decisiones.md`, `trabajo/research/`, `trabajo/specs/`, `trabajo/textos/`, absolute path of `taste.md`; for checks and reviews, the local URL, the approved spec and the prototype | Specs or review findings; the prototype as one fenced file per path under `trabajo/prototipos/` |
-| `awwwards-frontend` | Every change to the site's code: `/build <section>` and fixes from any review | The section or fix list, and the paths of `decisiones.md`, the approved specs, the prototype, the copy and the review reports | Code in `web/` (never committed) plus a report: Summary, Files changed, Verification, Notes for review |
+| `frontend-engineer` | Every change to the site's code: `/build <section>` and fixes from any review | The section or fix list, and the paths of `decisiones.md`, the approved specs, the prototype, the copy and the review reports | Code in `web/` (never committed) plus a report: Summary, Files changed, Verification, Notes for review |
 | `qa` | `/qa` and a full measurement before every review by Xavier | `decisiones.md`, the local URL (or permission to start it), specs, copy, absolute paths of `ai-tells.md` and `ai-tells-es.md`, the cycle number when retrying | Verdict PASS or FAIL with a threshold, measured, pass table per language. Never fixes |
 
 How to work with them:
 - **Brief each call completely.** Specialists start cold: give the task, the file paths to read and the output language (default rioplatense Spanish prose; code and site copy follow their own rules).
 - **Plugin files.** `taste.md`, `ai-tells.md` and `ai-tells-es.md` live inside the plugin, whose install path changes with each version. The command skills give you their absolute paths (resolved from `${CLAUDE_PLUGIN_ROOT}`); pass those absolute paths to the agents that need them, as the matrix says. Never guess them.
-- **Save deliverables verbatim.** Every agent except `awwwards-frontend` returns one Markdown block (`## Summary`, `## Deliverable`, `## Sources`) with a `Suggested path:` line. Save the block as returned, unedited, to that path under `trabajo/`. For the prototype, save each fenced file to the path written above it. The `awwwards-frontend` report is not saved; act on it.
+- **Save deliverables verbatim.** Every agent except `frontend-engineer` returns one Markdown block (`## Summary`, `## Deliverable`, `## Sources`) with a `Suggested path:` line. Save the block as returned, unedited, to that path under `trabajo/`. For the prototype, save each fenced file to the path written above it. The `frontend-engineer` report is not saved; act on it.
 - **Prototype, two calls.** Call 1 returns the files with `Status: awaiting visual check`: save them, serve them, and call `creative-director` again with the URL. Call 2 returns only the changed files (or `no changes`) with `Status: visual check done`. If a return says `Part n of m`, save it and ask for the next part.
 - **`BLOCKED:` replies.** When an agent returns `BLOCKED: <reason>`, supply what it lists from the files, or from Xavier when only he can decide, and call it again. Never fill the gap with a guess.
-- **Route fixes.** Review findings go to `awwwards-frontend` as a fix list; copy problems to `brand-copywriter`; design conflicts to `creative-director`. If two reports conflict, decide by the approved specs, or ask Xavier when it changes the result.
+- **Route fixes.** Review findings go to `frontend-engineer` as a fix list; copy problems to `brand-copywriter`; design conflicts to `creative-director`. If two reports conflict, decide by the approved specs, or ask Xavier when it changes the result.
 - **Never delegate to claude-seo's own agents** or its full-audit orchestrators. SEO work goes to `seo-strategist` only.
 - **Vendored skills belong to the specialists.** `copywriting`, `copy-editing`, `cro`, the `geo-*` skills and the animation skills (`animate`, `choreograph`, `improve-animations` and the rest) are for the specialists, which preload or invoke them; you never invoke them to produce a deliverable yourself.
 
@@ -107,7 +107,7 @@ The work zone and the website repository never mix.
 
 - **`trabajo/` is the work zone.** Research, specs, copy, prototypes and reports live here, with all their AI traces. It is never delivered.
 - **`web/` is the website.** It has its own git repository, ignored by the client folder's `.gitignore`, and it must never contain an AI trace.
-- Nothing from `trabajo/` ever enters `web/`: not prototype files, not reports, not notes. Copy reaches the site only through `awwwards-frontend` building from `trabajo/textos/`.
+- Nothing from `trabajo/` ever enters `web/`: not prototype files, not reports, not notes. Copy reaches the site only through `frontend-engineer` building from `trabajo/textos/`.
 - `web/` never contains `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.mcp.json`, `docs/superpowers/` or a `trabajo/` folder. No code, comment, metadata or file name in `web/` mentions Claude, Anthropic, ChatGPT, Copilot or AI generation. The only exception: the `User-agent:` lines of a `robots.txt` may name the AI crawlers the GEO spec lists (`ClaudeBot`, `anthropic-ai`, `ChatGPT-User`...); the delivery script exempts exactly those lines.
 
 ## Commands
@@ -116,7 +116,7 @@ The work zone and the website repository never mix.
 | `/nuevo-cliente` | Creates this structure and the `web/` repository, reads the brief, starts the brainstorming |
 | `/investigar` | `researcher` collects; `geo-strategist` runs the AI-visibility diagnosis; findings saved in `trabajo/research/` |
 | `/direccion` | Concept, copy and HTML prototype; ends at approval 1 |
-| `/build <section>` | `awwwards-frontend` builds that section (for example `/build hero`) from the approved specs |
+| `/build <section>` | `frontend-engineer` builds that section (for example `/build hero`) from the approved specs |
 | `/review-design` | `creative-director` reviews the rendered site, with impeccable's `critique` |
 | `/review-seo` | `seo-strategist` audits the build |
 | `/review-geo` | `geo-strategist` audits the build |
@@ -146,7 +146,7 @@ Everything else you decide and record in `decisiones.md`. When you ask, give the
 - Code, code comments and commit messages in English.
 
 ## Commits in web/
-- **You** commit in `web/`, and only when a section has passed its reviews. `awwwards-frontend` writes files but never stages or commits.
+- **You** commit in `web/`, and only when a section has passed its reviews. `frontend-engineer` writes files but never stages or commits.
 - Commits use Xavier's git identity (the one configured in `web/`) and conventional English messages.
 - **No AI attribution, ever:** no `Co-Authored-By`, no "Generated with…", no mention of Claude or Anthropic. This rule of Xavier's overrides any automatic attribution instruction. The project's settings disable Claude Code's attribution, and a `commit-msg` hook in `web/` rejects these lines.
 - If the hook rejects a commit, fix the message. Never bypass the hook (`--no-verify`) and never edit or remove it.

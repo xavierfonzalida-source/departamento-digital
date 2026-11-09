@@ -2,7 +2,8 @@
 
 - **Fecha:** 2026-11-08
 - **Autor de las decisiones:** Xavier (fundador). Redactado por Claude a partir de la sesión de brainstorming.
-- **Estado:** borrador para aprobación.
+- **Estado:** aprobado el 2026-11-08. Implementado en la versión 0.1.0.
+- **Cambio posterior (0.3.0):** el agente `awwwards-frontend` se renombró a `frontend-engineer` para no usar una marca de terceros. Este documento ya usa el nombre nuevo.
 
 Convención de este documento:
 - Lo que Xavier decidió figura como decisión, sin marca.
@@ -87,7 +88,7 @@ Concepto y textos
    ══ APROBACIÓN 1 DE XAVIER ══
 Plan de implementación (superpowers:writing-plans)
 /build <sección>
-   └─ awwwards-frontend construye según la spec aprobada
+   └─ frontend-engineer construye según la spec aprobada
 /review-design · /review-seo · /review-geo · /qa
    └─ Si algo no llega al umbral, vuelve a construcción. Xavier no lo ve
 Revisión de Xavier → /ronda (cambios) → construcción y revisiones otra vez
@@ -99,7 +100,7 @@ Revisión de Xavier → /ronda (cambios) → construcción y revisiones otra vez
 Reglas del recorrido:
 - **Dos aprobaciones obligatorias:** el diseño, antes de escribir código, y la certificación final. En el resto, los agentes avanzan solos y consultan a Xavier solo ante decisiones que cambien el resultado.
 - **Las rondas de cambios son normales.** Los controles de calidad corren en cada ronda, pero no reemplazan la certificación.
-- **El stack se decide por proyecto,** a partir del brief, en la etapa de dirección, y se aprueba con el diseño. Por defecto es Astro, para sitios de contenido. Next.js se usa cuando hay partes de aplicación: login, paneles o datos en vivo. `awwwards-frontend` maneja los dos.
+- **El stack se decide por proyecto,** a partir del brief, en la etapa de dirección, y se aprueba con el diseño. Por defecto es Astro, para sitios de contenido. Next.js se usa cuando hay partes de aplicación: login, paneles o datos en vivo. `frontend-engineer` maneja los dos.
 
 ## 5. Estándares de calidad (umbrales medibles)
 
@@ -168,10 +169,10 @@ Es uno solo para todos los clientes: el "manual del estudio". `/nuevo-cliente` l
 | Skill | Origen y licencia | Cómo entra al plugin | Revisión | Usada por |
 |---|---|---|---|---|
 | superpowers (brainstorming, writing-plans, verification-before-completion) | claude-plugins-official | Dependencia del plugin | Plugin oficial ya en uso | Orquestador |
-| **impeccable** (skill anti-IA principal) | github.com/pbakaus/impeccable, Apache-2.0, 105k ★ | Dependencia (marketplace `pbakaus/impeccable`) | README revisado. Ver advertencia abajo | creative-director, awwwards-frontend (`polish`, `animate`), qa (`audit`, `critique`) |
+| **impeccable** (skill anti-IA principal) | github.com/pbakaus/impeccable, Apache-2.0, 105k ★ | Dependencia (marketplace `pbakaus/impeccable`) | README revisado. Ver advertencia abajo | creative-director, frontend-engineer (`polish`, `animate`), qa (`audit`, `critique`) |
 | ui-ux-pro-max | github.com/nextlevelbuilder/ui-ux-pro-max-skill, MIT, 146k ★, tiene marketplace propio | Dependencia **[Decisión de Claude]**; ya está instalada como skill de usuario en la PC de Xavier | Ya en uso | creative-director |
 | taste-skill (**solo consulta**) | github.com/leonxlnx/taste-skill, MIT, 111k ★ | Se copia **solo el contenido de `SKILL.md`** como archivo de referencia (`references/taste.md`), **sin** su frontmatter ni su hook `Stop`, conservando la licencia | Código revisado: solo se conecta a 127.0.0.1, Overpass y Wikimedia. Su hook `Stop` corre un chequeo de hasta 10 minutos al final de cada respuesta: **por eso no se instala como skill** | creative-director (consulta) |
-| Skills de animación de Emil Kowalski | github.com/emilkowalski/skills, MIT, 54k ★ | Se copian al plugin con su atribución: `emil-design-eng`, `animate`, `review-animations`, `improve-animations`, `find-animation-opportunities`, `choreograph`, `animation-performance`, `animation-vocabulary`, `break-ui` | README revisado; son instrucciones | awwwards-frontend; `break-ui` y `review-animations` también para qa |
+| Skills de animación de Emil Kowalski | github.com/emilkowalski/skills, MIT, 54k ★ | Se copian al plugin con su atribución: `emil-design-eng`, `animate`, `review-animations`, `improve-animations`, `find-animation-opportunities`, `choreograph`, `animation-performance`, `animation-vocabulary`, `break-ui` | README revisado; son instrucciones | frontend-engineer; `break-ui` y `review-animations` también para qa |
 | claude-seo (solo sus skills) | github.com/AgriciDaniel/claude-seo, MIT, 27k ★ | Dependencia (tiene marketplace propio) | Código revisado por patrones: solo se conecta al sitio auditado y a APIs oficiales (Google, Bing, Moz), con protección SSRF. Su hook `PostToolUse` valida el JSON-LD en cada `Edit`/`Write`: **se conserva** | seo-strategist |
 | `geo-citability`, `geo-crawlers`, `geo-llmstxt` | github.com/zubair-trabzada/geo-seo-claude, MIT, 11.5k ★ | Se copian solo esas tres, con sus scripts y su atribución. El resto (CRM, propuestas, PDF) no entra | Código revisado: solo se conecta al sitio analizado | geo-strategist |
 | `copywriting`, `copy-editing`, `cro` | github.com/coreyhaines31/marketingskills, MIT, 59k ★ | Se copian solo esas tres, con su atribución | Solo texto, sin scripts ni hooks. `copywriting` incluye `references/ai-tells.md`, la lista negra de patrones de IA | brand-copywriter; `cro` también para creative-director |
@@ -190,7 +191,7 @@ Es uno solo para todos los clientes: el "manual del estudio". `/nuevo-cliente` l
 
 | MCP | Origen | Para qué | Costo | Agentes |
 |---|---|---|---|---|
-| Context7 | Ya en uso por Xavier | Documentación actualizada de Astro, Next.js, GSAP, Tailwind, Three.js | Gratis | awwwards-frontend, seo-strategist |
+| Context7 | Ya en uso por Xavier | Documentación actualizada de Astro, Next.js, GSAP, Tailwind, Three.js | Gratis | frontend-engineer, seo-strategist |
 | Chrome DevTools MCP | `chrome-devtools-mcp` (Google). Requiere Chrome estable y Node ≥ 20.19 | Trazas de rendimiento (LCP, CLS, INP), Lighthouse y profiler de animación | Gratis; gasta bastantes tokens | qa |
 | Playwright MCP | `@playwright/mcp` (Microsoft) | Recorrer formularios y CTAs, varios tamaños de pantalla, navegación con teclado | Gratis | qa |
 | DataForSEO MCP | Oficial (dataforseo.com/seo-mcp-server), gratis y open source | Keywords, volúmenes, SERP con AI Overview, competencia y crawl de competidores | Pago por uso. ≈ USD 5 por sitio estándar (§7.3). Recarga mínima de USD 50 sin vencimiento | researcher (datos), seo-strategist |
@@ -225,7 +226,7 @@ Hay 7 agentes especialistas y el orquestador, que es la sesión principal. Ning�
 - **Rol:** Lead Project Manager y Lead Architect. Único interlocutor de Xavier.
 - **Tareas:** conducir el recorrido, delegar, **guardar en la zona de trabajo** lo que devuelven los especialistas que no escriben, mantener `decisiones.md` y `estado.md`, y consultar a Xavier.
 - **Skills:** superpowers (brainstorming, writing-plans, verification-before-completion).
-- **Escribe archivos:** sí, solo en la zona de trabajo y en `brief.md`. No escribe el código del sitio: lo delega en `awwwards-frontend`.
+- **Escribe archivos:** sí, solo en la zona de trabajo y en `brief.md`. No escribe el código del sitio: lo delega en `frontend-engineer`.
 
 ### 8.2 Especialistas
 
@@ -233,10 +234,10 @@ Hay 7 agentes especialistas y el orquestador, que es la sesión principal. Ning�
 |---|---|---|---|---|---|---|
 | `creative-director` | opus | Concepto central (lo visual y el mensaje), dirección visual, elección de stack y prototipo HTML con los textos reales. En `/review-design` juzga el sitio **renderizado**, no el código | impeccable, ui-ux-pro-max, `cro`, taste (consulta) | Read, Glob, Grep, WebFetch, Playwright y Chrome DevTools (para ver referentes, el prototipo y el sitio en la URL que le pasa el orquestador). **Sin Bash** | **No** | Spec de dirección visual y el HTML del prototipo como texto. El orquestador lo guarda en `trabajo/prototipos/` |
 | `brand-copywriter` | opus | Guía de voz y textos por sección: titulares, cuerpo, CTAs y metadatos | `copywriting`, `copy-editing`, `cro` | Read, Glob, Grep | **No** | Guía de voz y textos. Nunca inventa datos: placeholders visibles |
-| `seo-strategist` | opus | Arquitectura de contenidos, keywords, metadatos y plan de Schema; después audita | skills de claude-seo | Read, Glob, Grep, DataForSEO, Context7 | **No** | Spec SEO y después un reporte de auditoría con correcciones para `awwwards-frontend` |
+| `seo-strategist` | opus | Arquitectura de contenidos, keywords, metadatos y plan de Schema; después audita | skills de claude-seo | Read, Glob, Grep, DataForSEO, Context7 | **No** | Spec SEO y después un reporte de auditoría con correcciones para `frontend-engineer` |
 | `geo-strategist` | opus | Entidades, citabilidad, estructura citable por IA, `llms.txt` y crawlers de IA; después audita | `geo-citability`, `geo-crawlers`, `geo-llmstxt` | Read, Glob, Grep, Wikidata, mcp-geo | **No** | Spec GEO, diagnóstico de visibilidad y reporte de auditoría |
 | `researcher` | haiku | Juntar referentes, competencia, keywords y datos **con fuente**. No saca conclusiones ni decide | — | Read, WebFetch, Brave, DataForSEO (consultas de datos) | **No** | Informe de hallazgos con la fuente de cada dato |
-| `awwwards-frontend` | sonnet | Construir según la spec aprobada (Astro o Next.js, Tailwind v4, GSAP con ScrollTrigger y Flip, Three.js sutil) y aplicar las correcciones de las auditorías | skills de animación de Emil Kowalski, impeccable (`polish`, `animate`) | Read, Write, Edit, Glob, Grep, Bash, Context7 | **Sí. El único que escribe código, solo en `web/`** | Código en `web/` y un resumen de lo hecho |
+| `frontend-engineer` | sonnet | Construir según la spec aprobada (Astro o Next.js, Tailwind v4, GSAP con ScrollTrigger y Flip, Three.js sutil) y aplicar las correcciones de las auditorías | skills de animación de Emil Kowalski, impeccable (`polish`, `animate`) | Read, Write, Edit, Glob, Grep, Bash, Context7 | **Sí. El único que escribe código, solo en `web/`** | Código en `web/` y un resumen de lo hecho |
 | `qa` | opus | Medir los umbrales de la §5, recorrer flujos, aplicar el detector anti-IA y la lista `ai-tells`. No corrige nada | impeccable (`audit`, `critique`), `break-ui`, `review-animations` | Read, Glob, Grep, Bash (servidor local y builds), Chrome DevTools, Playwright | **No** | Reporte de aprobado o fallido por umbral, con evidencia |
 
 **`Bash` en `qa`:** lo necesita para levantar el servidor local y correr el build. Como `tools` no limita rutas, su prompt prohíbe modificar archivos. Es un riesgo aceptado (§12).
@@ -257,7 +258,7 @@ Cada archivo `agents/<nombre>.md` tiene:
 | `/nuevo-cliente` | Crea la estructura del proyecto (§10), copia el `CLAUDE.md` de plantilla, crea el repositorio Git de `web/`, lee el brief e inicia el brainstorming |
 | `/investigar` | Delega en `researcher` (y dispara el diagnóstico de mcp-geo). Guarda los hallazgos en `trabajo/research/` |
 | `/direccion` | Concepto, textos y prototipo HTML. Cierra con la **aprobación 1** |
-| `/build <sección>` | Por ejemplo `/build hero`: `awwwards-frontend` construye esa sección según la spec. Reemplaza al `/build-hero` original, para no tener un comando por sección |
+| `/build <sección>` | Por ejemplo `/build hero`: `frontend-engineer` construye esa sección según la spec. Reemplaza al `/build-hero` original, para no tener un comando por sección |
 | `/review-design` | `creative-director` + impeccable `critique` sobre lo construido |
 | `/review-seo` | Auditoría de `seo-strategist` |
 | `/review-geo` | Auditoría de `geo-strategist` |
@@ -276,7 +277,7 @@ Figma Starter tiene 6 llamadas al MCP por mes según la documentación oficial, 
 
 ### 9.2 Alcance del prototipo y paso a construcción **[Decisión de Claude]**
 - **Alcance:** la home completa y una página interior representativa por cada tipo de plantilla distinto (por ejemplo, servicio o caso). Incluye los textos reales, la paleta, la tipografía y las animaciones clave. La aprobación 1 cubre esas pantallas y el sistema visual que se desprende de ellas.
-- **Paso a construcción:** el prototipo es **referencia visual y de comportamiento, no código a portar**. `awwwards-frontend` reconstruye en el stack elegido (Astro o Next.js) a partir de la spec y del prototipo. El prototipo se queda en `trabajo/prototipos/` y nunca entra a `web/`.
+- **Paso a construcción:** el prototipo es **referencia visual y de comportamiento, no código a portar**. `frontend-engineer` reconstruye en el stack elegido (Astro o Next.js) a partir de la spec y del prototipo. El prototipo se queda en `trabajo/prototipos/` y nunca entra a `web/`.
 - Para ver el prototipo y el sitio, el orquestador levanta el servidor local y pasa la URL a los agentes que miran en el navegador.
 
 ## 10. Estructura de archivos
@@ -320,7 +321,7 @@ departamento-digital/
 **[Decisión de Claude]:**
 - `web/` tiene su propio repositorio Git desde el inicio. Si la carpeta del cliente también es un repositorio, `web/` queda en su `.gitignore`. Así el historial del sitio nunca contiene archivos de la zona de trabajo.
 - Durante la construcción, los commits en `web/` usan la identidad Git de Xavier y **no** llevan líneas de atribución de IA. Mensajes en inglés, estilo convencional.
-- **Quién commitea:** el orquestador, cuando una sección pasa las revisiones. `awwwards-frontend` escribe archivos pero no commitea.
+- **Quién commitea:** el orquestador, cuando una sección pasa las revisiones. `frontend-engineer` escribe archivos pero no commitea.
 - **Prevención desde el día uno:** `/nuevo-cliente` deja en `web/` un hook Git `commit-msg` que **rechaza** commits con `Co-Authored-By`, `Generated with`, `Claude` o `Anthropic`. También escribe en `.claude/settings.json` de la carpeta del cliente la configuración que desactiva la atribución automática de Claude Code. **[Constructor]** confirma el nombre actual de esa configuración en la documentación oficial.
 
 ### 10.3 Entrega sin rastros de IA (`/entregar`)
@@ -358,7 +359,7 @@ Es un script fijo, no un agente. Solo corre después de la certificación de Xav
    - `/build hero` escribe solo dentro de `web/`.
    - `/qa` reporta cada umbral con su medición.
    - `/entregar` **falla** si se planta a propósito un `Co-Authored-By` o un `CLAUDE.md` en `web/`, y **pasa** cuando está limpio.
-4. Ningún agente especialista puede lanzar subagentes, y ninguno salvo `awwwards-frontend` puede escribir archivos. Se verifica con `/agents`.
+4. Ningún agente especialista puede lanzar subagentes, y ninguno salvo `frontend-engineer` puede escribir archivos. Se verifica con `/agents`.
 5. No hay ninguna credencial en el repositorio.
 
 ## 14. Lo que queda a criterio del constructor

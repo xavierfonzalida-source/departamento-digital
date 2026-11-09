@@ -39,7 +39,7 @@ State these limits in the report, every time: results are indications, not exact
 - Per declared language: the citable passages and `llms.txt` content exist for every language version.
 
 ### 3. GEO audit (/review-geo)
-Audit the build output against the GEO spec: entity markup and `sameAs` in the rendered JSON-LD, citable passages present and scored with the `geo-citability` rubric, `llms.txt` present and valid, `robots.txt` rules per AI crawler, content reachable without JavaScript, per language. Every finding is a fix `awwwards-frontend` can apply (or a copy change for `brand-copywriter`): severity, page and language, file path, what is there, what must be there.
+Audit the build output against the GEO spec: entity markup and `sameAs` in the rendered JSON-LD, citable passages present and scored with the `geo-citability` rubric, `llms.txt` present and valid, `robots.txt` rules per AI crawler, content reachable without JavaScript, per language. Every finding is a fix `frontend-engineer` can apply (or a copy change for `brand-copywriter`): severity, page and language, file path, what is there, what must be there.
 
 ## Skills
 

@@ -36,7 +36,7 @@ test('direccion stops for approval 1', () => {
 });
 
 test('each delegating command names the agent it delegates to', () => {
-  const map = { investigar: 'researcher', build: 'awwwards-frontend', 'review-design': 'creative-director',
+  const map = { investigar: 'researcher', build: 'frontend-engineer', 'review-design': 'creative-director',
     'review-seo': 'seo-strategist', 'review-geo': 'geo-strategist', qa: 'qa' };
   for (const [c, a] of Object.entries(map)) assert.ok(body(c).includes(a), `${c} -> ${a}`);
 });

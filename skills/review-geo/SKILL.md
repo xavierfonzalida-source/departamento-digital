@@ -1,6 +1,6 @@
 ---
 name: review-geo
-description: GEO audit of the built site - geo-strategist checks the production build output against the GEO spec (entity markup and sameAs, citable passages, llms.txt, AI-crawler rules, content without JavaScript) per declared language; fixes go back to awwwards-frontend, within the 3-cycle limit.
+description: GEO audit of the built site - geo-strategist checks the production build output against the GEO spec (entity markup and sameAs, citable passages, llms.txt, AI-crawler rules, content without JavaScript) per declared language; fixes go back to frontend-engineer, within the 3-cycle limit.
 disable-model-invocation: true
 ---
 
@@ -20,8 +20,8 @@ Tell it the exact `Suggested path:` to use, `trabajo/reportes/geo-<section>-<YYY
 
 ## 3. Verdict and fixes
 The audit passes when every GEO spec section passes in every declared language and no critical or major finding remains. Xavier does not see a failing audit.
-1. Send the fixes to `awwwards-frontend` as one list with the report's path. Changes to citable passages go to `brand-copywriter` first. A fix that conflicts with the SEO spec goes back to both strategists' specs; one that changes the result goes to Xavier.
-2. Read the `awwwards-frontend` report; its Verification must show a passing build.
+1. Send the fixes to `frontend-engineer` as one list with the report's path. Changes to citable passages go to `brand-copywriter` first. A fix that conflicts with the SEO spec goes back to both strategists' specs; one that changes the result goes to Xavier.
+2. Read the `frontend-engineer` report; its Verification must show a passing build.
 3. Rebuild and audit again with the same scope. Each round is one cycle; log it in `trabajo/estado.md` under "Ciclos de revisión". After cycle 3 with the same finding open, stop and escalate as "Retry limit" in `CLAUDE.md` says.
 
 ## 4. Close

@@ -1,6 +1,6 @@
 ---
 name: review-design
-description: Design review of the built site - creative-director judges the rendered pages in a browser against the approved direction spec and prototype, with impeccable's critique; failing findings go back to awwwards-frontend as a fix list, within the 3-cycle limit.
+description: Design review of the built site - creative-director judges the rendered pages in a browser against the approved direction spec and prototype, with impeccable's critique; failing findings go back to frontend-engineer as a fix list, within the 3-cycle limit.
 disable-model-invocation: true
 ---
 
@@ -25,8 +25,8 @@ Tell it the exact `Suggested path:` to use, `trabajo/reportes/design-<section>-<
 
 ## 3. Verdict and fixes
 The review passes when no critical or major finding remains. Xavier does not see a failing review.
-1. Route each finding per "Route fixes" in `CLAUDE.md`: implementation defects to `awwwards-frontend` as one fix list with the report's path; copy problems to `brand-copywriter` (then the new copy to `awwwards-frontend`); a finding that would change an approved design decision to `creative-director`, or to Xavier when it changes the result. Minor findings go in the same fix list unless they would change a design decision.
-2. Read the `awwwards-frontend` report; its Verification must show a passing build.
+1. Route each finding per "Route fixes" in `CLAUDE.md`: implementation defects to `frontend-engineer` as one fix list with the report's path; copy problems to `brand-copywriter` (then the new copy to `frontend-engineer`); a finding that would change an approved design decision to `creative-director`, or to Xavier when it changes the result. Minor findings go in the same fix list unless they would change a design decision.
+2. Read the `frontend-engineer` report; its Verification must show a passing build.
 3. Rebuild (`npm run build` in `web/`), restart the preview server, read the URL again, then review again with the same scope. Each build-and-review round is one cycle; log it in `trabajo/estado.md` under "Ciclos de revisión". After cycle 3 with the same finding still open, stop and escalate to Xavier as "Retry limit" in `CLAUDE.md` says.
 
 ## 4. Close

@@ -1,6 +1,6 @@
 ---
 name: ronda
-description: Runs a round of Xavier's changes - splits his comments into items, routes each one to the agent that owns it (copy, design, SEO, GEO or code), applies them through awwwards-frontend, reruns the reviews and QA, and presents the result for his next comments or his certification.
+description: Runs a round of Xavier's changes - splits his comments into items, routes each one to the agent that owns it (copy, design, SEO, GEO or code), applies them through frontend-engineer, reruns the reviews and QA, and presents the result for his next comments or his certification.
 disable-model-invocation: true
 argument-hint: "<comentarios de Xavier>"
 ---
@@ -32,9 +32,9 @@ Owner per the delegation matrix in `CLAUDE.md`:
 | Look, layout, motion, imagery | `creative-director` (spec, taste path, the comment) | spec update saved to `trabajo/specs/` |
 | Pages, URLs, metadata rules, Schema | `seo-strategist` | spec update saved |
 | Entities, citable passages, `llms.txt`, AI crawlers | `geo-strategist` | spec update saved |
-| A bug or a change that needs no spec decision | `awwwards-frontend` directly | |
+| A bug or a change that needs no spec decision | `frontend-engineer` directly | |
 
-Order: spec updates first, then copy, then code. When specs and copy are saved, give `awwwards-frontend` one fix list with every item and the paths of the updated files. Brief every call completely and save every return verbatim, as `CLAUDE.md` says.
+Order: spec updates first, then copy, then code. When specs and copy are saved, give `frontend-engineer` one fix list with every item and the paths of the updated files. Brief every call completely and save every return verbatim, as `CLAUDE.md` says.
 
 ## 3. Reviews
 Run the reviews exactly as step 2 of `/build` describes, from its command file `${CLAUDE_PLUGIN_ROOT}/skills/build/SKILL.md` (read raw with `Read`, never through the Skill tool; wherever it shows the plugin-root variable, the plugin root is `${CLAUDE_PLUGIN_ROOT}`), with this round's changes as the scope, the same 3-cycle limit and `/qa` last. Then commit as its step 3 says, with a message such as `fix: apply review round changes`.

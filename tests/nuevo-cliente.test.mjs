@@ -155,7 +155,7 @@ test('CLAUDE.md covers thresholds, agents, commands and orchestrator duties', ()
     '[PLACEHOLDER:', 'BLOCKED', 'CLAUDE_PLUGIN_ROOT', 'Co-Authored-By', 'Generated with'])
     assert.ok(md.includes(s), s);
   for (const a of ['creative-director', 'brand-copywriter', 'seo-strategist', 'geo-strategist', 'researcher',
-    'awwwards-frontend', 'qa'])
+    'frontend-engineer', 'qa'])
     assert.ok(md.includes(`\`${a}\``), a);
   for (const c of ['/nuevo-cliente', '/investigar', '/direccion', '/build', '/review-design', '/review-seo',
     '/review-geo', '/qa', '/ronda', '/entregar'])
