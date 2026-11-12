@@ -26,7 +26,7 @@ const EXPECT = {
   'geo-strategist':    { model: 'opus',   write: false, mcp: ['wikidata','mcp-geo'] },
   'researcher':        { model: 'haiku',  write: false, mcp: ['brave-search','dataforseo'] },
   'frontend-engineer': { model: 'sonnet', write: true,  mcp: ['context7'] },
-  'qa':                { model: 'opus',   write: false, mcp: ['chrome-devtools','playwright'] },
+  'qa':                { model: 'sonnet', write: false, mcp: ['chrome-devtools','playwright'] },
 };
 test('exactly the seven agents exist', () => { assert.deepEqual(agentNames().sort(), Object.keys(EXPECT).sort()); });
 for (const [name, e] of Object.entries(EXPECT)) {

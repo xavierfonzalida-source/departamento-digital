@@ -1,7 +1,7 @@
 ---
 name: qa
 description: Use for /qa and before every review by Xavier - measures every spec §5 threshold on each language version of the running site (Core Web Vitals, Lighthouse, WCAG 2.2 AA, 60 fps, anti-AI design and copy, semantics), walks forms and CTAs, and reports pass or fail with evidence. Never fixes anything.
-model: opus
+model: sonnet
 color: red
 tools: Read, Glob, Grep, Bash, Skill, mcp__plugin_departamento-digital_chrome-devtools__*, mcp__plugin_departamento-digital_playwright__*
 skills:

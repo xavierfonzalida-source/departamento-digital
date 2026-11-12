@@ -4,6 +4,7 @@
 - **Autor de las decisiones:** Xavier (fundador). Redactado por Claude a partir de la sesión de brainstorming.
 - **Estado:** aprobado el 2026-11-08. Implementado en la versión 0.1.0.
 - **Cambio posterior (0.3.0):** el agente `awwwards-frontend` se renombró a `frontend-engineer` para no usar una marca de terceros. Este documento ya usa el nombre nuevo.
+- **Cambio posterior (0.4.0):** `qa` pasa de Opus a Sonnet (decisión de Xavier): mide con herramientas y compara contra umbrales; el juicio estético queda en `creative-director`. La tabla de §8.2 ya refleja el cambio.
 
 Convención de este documento:
 - Lo que Xavier decidió figura como decisión, sin marca.
@@ -238,7 +239,7 @@ Hay 7 agentes especialistas y el orquestador, que es la sesión principal. Ning�
 | `geo-strategist` | opus | Entidades, citabilidad, estructura citable por IA, `llms.txt` y crawlers de IA; después audita | `geo-citability`, `geo-crawlers`, `geo-llmstxt` | Read, Glob, Grep, Wikidata, mcp-geo | **No** | Spec GEO, diagnóstico de visibilidad y reporte de auditoría |
 | `researcher` | haiku | Juntar referentes, competencia, keywords y datos **con fuente**. No saca conclusiones ni decide | — | Read, WebFetch, Brave, DataForSEO (consultas de datos) | **No** | Informe de hallazgos con la fuente de cada dato |
 | `frontend-engineer` | sonnet | Construir según la spec aprobada (Astro o Next.js, Tailwind v4, GSAP con ScrollTrigger y Flip, Three.js sutil) y aplicar las correcciones de las auditorías | skills de animación de Emil Kowalski, impeccable (`polish`, `animate`) | Read, Write, Edit, Glob, Grep, Bash, Context7 | **Sí. El único que escribe código, solo en `web/`** | Código en `web/` y un resumen de lo hecho |
-| `qa` | opus | Medir los umbrales de la §5, recorrer flujos, aplicar el detector anti-IA y la lista `ai-tells`. No corrige nada | impeccable (`audit`, `critique`), `break-ui`, `review-animations` | Read, Glob, Grep, Bash (servidor local y builds), Chrome DevTools, Playwright | **No** | Reporte de aprobado o fallido por umbral, con evidencia |
+| `qa` | sonnet | Medir los umbrales de la §5, recorrer flujos, aplicar el detector anti-IA y la lista `ai-tells`. No corrige nada | impeccable (`audit`, `critique`), `break-ui`, `review-animations` | Read, Glob, Grep, Bash (servidor local y builds), Chrome DevTools, Playwright | **No** | Reporte de aprobado o fallido por umbral, con evidencia |
 
 **`Bash` en `qa`:** lo necesita para levantar el servidor local y correr el build. Como `tools` no limita rutas, su prompt prohíbe modificar archivos. Es un riesgo aceptado (§12).
 
